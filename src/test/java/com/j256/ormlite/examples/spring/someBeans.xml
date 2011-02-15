@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definitions of our JMX related beans -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<!-- This is a Spring xml file which has the local beans here specific to this application -->
+
+	<!-- a class which uses the daos and stuff -->
+	<bean id="someClass" class="com.j256.ormlite.examples.spring.SomeClass" depends-on="tableCreator">
+		<property name="accountDao" ref="accountDao" />
+		<property name="deliveryDao" ref="deliveryDao" />
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+
+	<!-- checks for the @Required annotations -->
+	<bean id="requiredAnnotationBeanPostProcessor"
+		class="org.springframework.beans.factory.annotation.RequiredAnnotationBeanPostProcessor" />
+</beans>

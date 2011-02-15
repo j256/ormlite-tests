@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Definitions of our JMX related beans -->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
+
+	<!-- This is a Spring xml file demonstrating the various beans needed to configure the database stuff -->
+
+	<!-- URL used for the database, most likely this would be in a properties file -->
+	<bean id="databaseUrl" class="java.lang.String">
+		<!-- we are using the in-memory H2 database in this example -->
+		<constructor-arg index="0" value="jdbc:h2:mem:springexample" />
+	</bean>
+
+	<!-- datasource used by the package to connect to the database -->
+	<!-- this data-source handles threaded pools of database connections but I didn't want to add a dependency <bean id="dataSource" 
+		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close"> <property name="driverClassName" ref="driverClassName" 
+		/> <property name="url" ref="databaseUrl" /> <property name="username" value="foo" /> <property name="password" value="bar" 
+		/> </bean> -->
+	<bean id="connectionSource" class="com.j256.ormlite.jdbc.JdbcConnectionSource" init-method="initialize">
+		<property name="url" ref="databaseUrl" />
+		<!-- probably should use system properties for these too -->
+		<property name="username" value="foo" />
+		<property name="password" value="bar" />
+	</bean>
+
+	<!-- transaction manager -->
+	<bean id="transactionManager" class="com.j256.ormlite.misc.TransactionManager">
+		<property name="connectionSource" ref="connectionSource" />
+	</bean>
+
+	<!-- spring wired field information -->
+	<bean id="deliveryTableConfig" class="com.j256.ormlite.table.DatabaseTableConfig">
+		<property name="dataClass" value="com.j256.ormlite.examples.spring.Delivery" />
+		<property name="tableName" value="deliveryTable" />
+		<property name="fieldConfigs">
+			<list>
+				<bean class="com.j256.ormlite.field.DatabaseFieldConfig">
+					<property name="fieldName" value="id" />
+					<property name="generatedId" value="true" />
+				</bean>
+				<bean class="com.j256.ormlite.field.DatabaseFieldConfig">
+					<property name="fieldName" value="when" />
+					<property name="canBeNull" value="false" />
+				</bean>
+				<bean class="com.j256.ormlite.field.DatabaseFieldConfig">
+					<property name="fieldName" value="signedBy" />
+				</bean>
+				<bean class="com.j256.ormlite.field.DatabaseFieldConfig">
+					<property name="fieldName" value="account" />
+					<property name="foreign" value="true" />
+				</bean>
+			</list>
+		</property>
+	</bean>
+
+	<!-- our daos that are created by using the DaoFactory -->
+	<bean id="accountDao" class="com.j256.ormlite.spring.DaoFactory" factory-method="createDao">
+		<constructor-arg index="0" ref="connectionSource" />
+		<constructor-arg index="1" value="com.j256.ormlite.examples.spring.Account" />
+	</bean>
+	<bean id="deliveryDao" class="com.j256.ormlite.spring.DaoFactory" factory-method="createDao">
+		<constructor-arg index="0" ref="connectionSource" />
+		<constructor-arg index="1" ref="deliveryTableConfig" />
+	</bean>
+
+	<!-- auto-creates tables as necessary, probably only useful for testing -->
+	<bean id="tableCreator" class="com.j256.ormlite.spring.TableCreator" init-method="initialize">
+		<property name="connectionSource" ref="connectionSource" />
+		<property name="configuredDaos">
+			<list>
+				<ref bean="accountDao" />
+				<ref bean="deliveryDao" />
+			</list>
+		</property>
+	</bean>
+</beans>
