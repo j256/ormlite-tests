@@ -8,6 +8,14 @@
 	<packaging>jar</packaging>
 	<name>ORM List Extra Tests</name>
 	<url>http://maven.apache.org</url>
+	<description>Lightweight Object Relational Model (ORM) tests</description>
+	<licenses>
+		<license>
+			<name>BSD License</name>
+			<url>http://ormlite.com/docs/license</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
 	<build>
 		<finalName>ormliteTest</finalName>
 		<!-- Resources -->
