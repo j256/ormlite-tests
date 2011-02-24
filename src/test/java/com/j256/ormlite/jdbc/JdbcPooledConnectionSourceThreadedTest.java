@@ -17,6 +17,7 @@ public class JdbcPooledConnectionSourceThreadedTest {
 	private static final int NUM_ITERATIONS = 50;
 	private static final int MAX_WAIT_MILLIS = 300;
 	private static final int MAX_CONNECTIONS_FREE = 5;
+	private static final int CHECK_CONN_EVERY_MILLIS = 100;
 
 	private final JdbcPooledConnectionSource pooled;
 
@@ -24,6 +25,7 @@ public class JdbcPooledConnectionSourceThreadedTest {
 		try {
 			pooled = new JdbcPooledConnectionSource(DEFAULT_DATABASE_URL);
 			pooled.setMaxConnectionsFree(MAX_CONNECTIONS_FREE);
+			pooled.setCheckConnectionsEveryMillis(CHECK_CONN_EVERY_MILLIS);
 		} catch (SQLException e) {
 			throw new RuntimeException("Could not allocate pooled connection source", e);
 		}
