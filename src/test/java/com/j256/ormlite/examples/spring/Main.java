@@ -10,9 +10,8 @@ import com.j256.ormlite.spring.TableCreator;
 public class Main {
 
 	// here is a list of XML files to be loaded by Spring
-	private String[] configNames =
-			new String[] { "classpath:/com/j256/ormlite/examples/spring/db.xml",
-					"classpath:/com/j256/ormlite/examples/spring/someBeans.xml" };
+	private String[] configNames = new String[] { "classpath:/com/j256/ormlite/examples/spring/db.xml",
+			"classpath:/com/j256/ormlite/examples/spring/someBeans.xml" };
 
 	public static void main(String[] args) throws Exception {
 		// turn our static method into an instance of Main
