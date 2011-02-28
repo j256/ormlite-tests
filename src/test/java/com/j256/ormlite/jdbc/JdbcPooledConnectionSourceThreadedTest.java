@@ -52,10 +52,13 @@ public class JdbcPooledConnectionSourceThreadedTest {
 		} finally {
 			pooled.close();
 		}
-		// we synchronize here to true to get good stats
+		// we synchronize here to try to get good stats
 		synchronized (pooled) {
-			assertEquals(pooled.getOpenCount(), pooled.getCloseCount());
 			assertEquals(0, pooled.getCurrentConnectionsManaged());
+			/**
+			 * since these are not synchronized counts, I've seen this test fail on occasion.
+			 */
+			assertEquals(pooled.getOpenCount(), pooled.getCloseCount());
 		}
 	}
 
