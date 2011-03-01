@@ -19,7 +19,7 @@ public class SqlServerJtdsQueryBuilderTest extends JdbcQueryBuilderTest {
 		userName = "gwatson";
 		password = "ormlite";
 	}
-	
+
 	@Override
 	@Test(expected = SQLException.class)
 	public void testOffsetWithLimit() throws Exception {

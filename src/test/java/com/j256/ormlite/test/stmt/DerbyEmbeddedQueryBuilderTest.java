@@ -17,7 +17,7 @@ public class DerbyEmbeddedQueryBuilderTest extends JdbcQueryBuilderTest {
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		databaseUrl = "jdbc:derby:target/ormlitederby;create=true";
 	}
-	
+
 	@Override
 	@Test
 	public void testOffsetNoLimit() throws Exception {
