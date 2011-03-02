@@ -1,8 +1,7 @@
 package com.j256.ormlite.test.table;
 
-import com.j256.ormlite.table.JdbcTableUtilsTest;
 
-public class PostgresTableUtilsTest extends JdbcTableUtilsTest {
+public class PostgresTableUtilsTest extends BaseTableUtilsTest {
 
 	private final static String DB_HOST = "db.be.256.com";
 

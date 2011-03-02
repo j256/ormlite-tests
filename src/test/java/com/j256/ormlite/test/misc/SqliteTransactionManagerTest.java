@@ -1,8 +1,7 @@
 package com.j256.ormlite.test.misc;
 
-import com.j256.ormlite.misc.JdbcTransactionManagerTest;
 
-public class SqliteTransactionManagerTest extends JdbcTransactionManagerTest {
+public class SqliteTransactionManagerTest extends BaseTransactionManagerTest {
 
 	@Override
 	protected void setDatabaseParams() {

@@ -1,8 +1,7 @@
 package com.j256.ormlite.test.table;
 
-import com.j256.ormlite.table.JdbcTableUtilsTest;
 
-public class HsqldbTableUtilsTest extends JdbcTableUtilsTest {
+public class HsqldbTableUtilsTest extends BaseTableUtilsTest {
 
 	@Override
 	protected void setDatabaseParams() {

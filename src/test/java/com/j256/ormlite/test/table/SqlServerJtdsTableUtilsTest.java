@@ -1,8 +1,7 @@
 package com.j256.ormlite.test.table;
 
-import com.j256.ormlite.table.JdbcTableUtilsTest;
 
-public class SqlServerJtdsTableUtilsTest extends JdbcTableUtilsTest {
+public class SqlServerJtdsTableUtilsTest extends BaseTableUtilsTest {
 
 	private final static String DB_HOST = "wfs2.jprinc.net";
 

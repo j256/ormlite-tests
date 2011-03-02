@@ -1,8 +1,7 @@
 package com.j256.ormlite.test.misc;
 
-import com.j256.ormlite.misc.JdbcTransactionManagerTest;
 
-public class PostgresTransactionManagerTest extends JdbcTransactionManagerTest {
+public class PostgresTransactionManagerTest extends BaseTransactionManagerTest {
 
 	private final static String DB_HOST = "db.be.256.com";
 

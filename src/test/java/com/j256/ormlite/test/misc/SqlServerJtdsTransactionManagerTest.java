@@ -1,8 +1,7 @@
 package com.j256.ormlite.test.misc;
 
-import com.j256.ormlite.misc.JdbcTransactionManagerTest;
 
-public class SqlServerJtdsTransactionManagerTest extends JdbcTransactionManagerTest {
+public class SqlServerJtdsTransactionManagerTest extends BaseTransactionManagerTest {
 
 	private final static String DB_HOST = "wfs2.jprinc.net";
 
