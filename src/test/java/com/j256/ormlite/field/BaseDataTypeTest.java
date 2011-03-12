@@ -619,7 +619,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	public void testFloat() throws Exception {
 		Class<LocalFloat> clazz = LocalFloat.class;
 		Dao<LocalFloat, Object> dao = createDao(clazz, true);
-		float val = 1331.221F;
+		float val = 1331.21F;
 		String valStr = Float.toString(val);
 		LocalFloat foo = new LocalFloat();
 		foo.floatField = val;
@@ -632,7 +632,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	public void testFloatObj() throws Exception {
 		Class<LocalFloatObj> clazz = LocalFloatObj.class;
 		Dao<LocalFloatObj, Object> dao = createDao(clazz, true);
-		Float val = 1331.221F;
+		Float val = 1331.21F;
 		String valStr = val.toString();
 		LocalFloatObj foo = new LocalFloatObj();
 		foo.floatField = val;

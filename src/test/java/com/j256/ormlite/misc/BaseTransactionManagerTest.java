@@ -3,9 +3,11 @@ package com.j256.ormlite.misc;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.junit.Before;
@@ -15,9 +17,8 @@ import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
-import com.j256.ormlite.misc.TransactionManager;
 
-public class BaseTransactionManagerTest extends BaseJdbcTest {
+public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 
 	@Override
 	@Before
@@ -40,7 +41,7 @@ public class BaseTransactionManagerTest extends BaseJdbcTest {
 		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		testTransactionManager(mgr, null, fooDao);
+		testTransactionManager(mgr, null, fooDao, false);
 	}
 
 	@Test
@@ -50,7 +51,7 @@ public class BaseTransactionManagerTest extends BaseJdbcTest {
 		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao);
+		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao, false);
 	}
 
 	@Test
@@ -62,7 +63,7 @@ public class BaseTransactionManagerTest extends BaseJdbcTest {
 		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao);
+		testTransactionManager(mgr, new RuntimeException("What!!  I protest!!"), fooDao, false);
 	}
 
 	@Test
@@ -74,7 +75,7 @@ public class BaseTransactionManagerTest extends BaseJdbcTest {
 		mgr.setConnectionSource(connectionSource);
 		mgr.initialize();
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"), fooDao);
+		testTransactionManager(mgr, new Exception("What!!  I protest via an Exception!!"), fooDao, false);
 	}
 
 	@Test
@@ -86,18 +87,80 @@ public class BaseTransactionManagerTest extends BaseJdbcTest {
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		mgr.callInTransaction(new Callable<Void>() {
 			public Void call() throws Exception {
-				testTransactionManager(mgr, null, fooDao);
+				testTransactionManager(mgr, null, fooDao, true);
 				return null;
 			}
 		});
 	}
 
+	@Test
+	public void testTransactionWithinTransactionThrows() throws Exception {
+		if (connectionSource == null || !databaseType.isNestedSavePointsSupported()) {
+			return;
+		}
+		final TransactionManager mgr = new TransactionManager(connectionSource);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		final Foo outerFoo = new Foo();
+		String stuff = "outer stuff";
+		outerFoo.stuff = stuff;
+		assertEquals(1, fooDao.create(outerFoo));
+		assertNotNull(fooDao.queryForId(outerFoo.id));
+		assertEquals(1, fooDao.queryForAll().size());
+		mgr.callInTransaction(new Callable<Void>() {
+			public Void call() throws Exception {
+				assertEquals(1, fooDao.delete(outerFoo));
+				assertNull(fooDao.queryForId(outerFoo.id));
+				assertEquals(0, fooDao.queryForAll().size());
+				testTransactionManager(mgr, new Exception("The inner transaction should throw and get rolled back"),
+						fooDao, true);
+				return null;
+			}
+		});
+		List<Foo> fooList = fooDao.queryForAll();
+		assertEquals(1, fooList.size());
+		assertNull(fooDao.queryForId(outerFoo.id));
+		// however we should have deleted the outer foo and are left with the inner foo
+		assertTrue(fooList.get(0).id != outerFoo.id);
+	}
+
+	@Test
+	public void testNestedTransactionsNotSupported() throws Exception {
+		if (connectionSource == null || databaseType.isNestedSavePointsSupported()) {
+			return;
+		}
+		final TransactionManager mgr = new TransactionManager(connectionSource);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		final Foo outerFoo = new Foo();
+		String stuff = "outer stuff";
+		outerFoo.stuff = stuff;
+		assertEquals(1, fooDao.create(outerFoo));
+		assertNotNull(fooDao.queryForId(outerFoo.id));
+		assertEquals(1, fooDao.queryForAll().size());
+		mgr.callInTransaction(new Callable<Void>() {
+			public Void call() throws Exception {
+				assertEquals(1, fooDao.delete(outerFoo));
+				assertNull(fooDao.queryForId(outerFoo.id));
+				assertEquals(0, fooDao.queryForAll().size());
+				testTransactionManager(mgr, new Exception("The inner transaction should throw and get rolled back"),
+						fooDao, true);
+				return null;
+			}
+		});
+		List<Foo> fooList = fooDao.queryForAll();
+		/*
+		 * The inner transaction throws an exception but we don't want the inner transaction rolled back since an
+		 * exception is caught there.
+		 */
+		assertEquals(0, fooList.size());
+	}
+
 	private void testTransactionManager(TransactionManager mgr, final Exception exception,
-			final Dao<Foo, Integer> fooDao) throws Exception {
+			final Dao<Foo, Integer> fooDao, boolean inner) throws Exception {
 		final Foo foo1 = new Foo();
 		String stuff = "stuff";
 		foo1.stuff = stuff;
 		assertEquals(1, fooDao.create(foo1));
+		assertNotNull(fooDao.queryForId(foo1.id));
 		try {
 			final int val = 13431231;
 			int returned = mgr.callInTransaction(new Callable<Integer>() {
@@ -131,10 +194,14 @@ public class BaseTransactionManagerTest extends BaseJdbcTest {
 			// still doesn't find it after we delete it
 			assertNull(fooDao.queryForId(foo1.id));
 		} else {
-			// still finds it after we delete it
+			// still finds it after we delete it since we threw inside of transaction
 			Foo foo2 = fooDao.queryForId(foo1.id);
-			assertNotNull(foo2);
-			assertEquals(stuff, foo2.stuff);
+			if (databaseType.isNestedSavePointsSupported() || (!inner)) {
+				assertNotNull(foo2);
+				assertEquals(stuff, foo2.stuff);
+			} else {
+				assertNull(foo2);
+			}
 		}
 	}
 
