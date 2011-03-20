@@ -1,6 +1,5 @@
 package com.j256.ormlite.table;
 
-
 public class PostgresTableUtilsTest extends BaseTableUtilsTest {
 
 	@Override

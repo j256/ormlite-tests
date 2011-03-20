@@ -4,9 +4,6 @@ import java.util.Iterator;
 
 import org.junit.Test;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.JdbcBaseDaoImplTest;
-
 public class PostgresBaseDaoImplTest extends JdbcBaseDaoImplTest {
 
 	@Override

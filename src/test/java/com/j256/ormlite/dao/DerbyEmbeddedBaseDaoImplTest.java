@@ -4,9 +4,6 @@ import static org.junit.Assert.assertFalse;
 
 import org.junit.Test;
 
-import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.GenericRawResults;
-import com.j256.ormlite.dao.JdbcBaseDaoImplTest;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 

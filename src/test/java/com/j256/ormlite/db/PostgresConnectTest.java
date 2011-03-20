@@ -1,7 +1,5 @@
 package com.j256.ormlite.db;
 
-import com.j256.ormlite.db.PostgresDatabaseType;
-import com.j256.ormlite.db.PostgresDatabaseTypeTest;
 
 /**
  * Does tests on a real database connection. I didn't want to have to require someone to have have downloaded derby

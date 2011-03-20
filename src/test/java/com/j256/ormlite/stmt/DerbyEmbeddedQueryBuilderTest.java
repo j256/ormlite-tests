@@ -7,8 +7,6 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.stmt.JdbcQueryBuilderTest;
-import com.j256.ormlite.stmt.QueryBuilder;
 
 public class DerbyEmbeddedQueryBuilderTest extends JdbcQueryBuilderTest {
 

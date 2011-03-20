@@ -1,6 +1,5 @@
 package com.j256.ormlite.stmt;
 
-import com.j256.ormlite.stmt.JdbcQueryBuilderTest;
 
 public class H2QueryBuilderTest extends JdbcQueryBuilderTest {
 

@@ -1,6 +1,5 @@
 package com.j256.ormlite.misc;
 
-
 public class DerbyTransactionManagerTest extends BaseTransactionManagerTest {
 
 	@Override

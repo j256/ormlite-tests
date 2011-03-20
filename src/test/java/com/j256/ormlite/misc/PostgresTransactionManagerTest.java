@@ -1,6 +1,5 @@
 package com.j256.ormlite.misc;
 
-
 public class PostgresTransactionManagerTest extends BaseTransactionManagerTest {
 
 	@Override

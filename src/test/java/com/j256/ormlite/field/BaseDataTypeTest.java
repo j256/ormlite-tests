@@ -5,10 +5,12 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -19,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import org.junit.AfterClass;
 import org.junit.Test;
@@ -47,6 +50,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String DOUBLE_COLUMN = "doubleField";
 	private static final String SERIALIZABLE_COLUMN = "serializable";
 	private static final String ENUM_COLUMN = "ourEnum";
+	private static final String UUID_COLUMN = "uuid";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	@AfterClass
@@ -81,6 +85,40 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.LONG_STRING, STRING_COLUMN, false, false, true, false, false,
+				false, true, false);
+	}
+
+	@Test
+	public void testStringBytes() throws Exception {
+		Class<LocalStringBytes> clazz = LocalStringBytes.class;
+		Dao<LocalStringBytes, Object> dao = createDao(clazz, true);
+		String val = "string with \u0185";
+		LocalStringBytes foo = new LocalStringBytes();
+		foo.string = val;
+		assertEquals(1, dao.create(foo));
+		byte[] valBytes = val.getBytes(Charset.forName(DataType.DEFAULT_STRING_BYTES_CHARSET_NAME));
+		testType(clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
+				false, true, false);
+	}
+
+	@Test
+	public void testStringBytesFormat() throws Exception {
+		Class<LocalStringBytesUtf8> clazz = LocalStringBytesUtf8.class;
+		Dao<LocalStringBytesUtf8, Object> dao = createDao(clazz, true);
+		String val = "string with \u0185";
+		LocalStringBytesUtf8 foo = new LocalStringBytesUtf8();
+		foo.string = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val.getBytes(Charset.forName("UTF-8")), val, DataType.STRING_BYTES, STRING_COLUMN,
+				false, false, true, false, true, false, true, false);
+	}
+
+	@Test
+	public void testStringBytesNull() throws Exception {
+		Class<LocalStringBytes> clazz = LocalStringBytes.class;
+		Dao<LocalStringBytes, Object> dao = createDao(clazz, true);
+		assertEquals(1, dao.create(new LocalStringBytes()));
+		testType(clazz, null, null, null, null, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
 				false, true, false);
 	}
 
@@ -160,7 +198,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@Test(expected = SQLException.class)
 	public void testDateParseInvalid() throws Exception {
 		if (connectionSource == null) {
-			throw new SQLException("Simulate a proper failure");
+			throw new SQLException("simulate expected exception");
 		}
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
@@ -200,7 +238,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@Test(expected = SQLException.class)
 	public void testJavaDateParseInvalid() throws Exception {
 		if (connectionSource == null) {
-			throw new SQLException("Simulate a proper failure");
+			throw new SQLException("simulate expected exception");
 		}
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
@@ -252,7 +290,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@Test(expected = SQLException.class)
 	public void testDateStringParseInvalid() throws Exception {
 		if (connectionSource == null) {
-			throw new SQLException("Simulate a proper failure");
+			throw new SQLException("simulate expected exception");
 		}
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
@@ -308,7 +346,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@Test(expected = SQLException.class)
 	public void testJavaDateStringParseInvalid() throws Exception {
 		if (connectionSource == null) {
-			throw new SQLException("Simulate a proper failure");
+			throw new SQLException("simulate expected exception");
 		}
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
@@ -342,7 +380,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@Test(expected = SQLException.class)
 	public void testDateLongParseInvalid() throws Exception {
 		if (connectionSource == null) {
-			throw new SQLException("Simulate a proper failure");
+			throw new SQLException("simulate expected exception");
 		}
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
@@ -379,7 +417,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@Test(expected = SQLException.class)
 	public void testJavaDateLongParseInvalid() throws Exception {
 		if (connectionSource == null) {
-			throw new SQLException("Simulate a proper failure");
+			throw new SQLException("simulate expected exception");
 		}
 		FieldType fieldType =
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
@@ -854,6 +892,19 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testUuid() throws Exception {
+		Class<LocalUuid> clazz = LocalUuid.class;
+		Dao<LocalUuid, Object> dao = createDao(clazz, true);
+		LocalUuid foo = new LocalUuid();
+		UUID val = UUID.randomUUID();
+		foo.uuid = val;
+		assertEquals(1, dao.create(foo));
+		String valStr = val.toString();
+		testType(clazz, val, val, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false, false, false,
+				true, false);
+	}
+
+	@Test
 	public void testUnknownGetResult() throws Exception {
 		DataType dataType = DataType.UNKNOWN;
 		assertNull(dataType.resultToJava(null, null, 0));
@@ -887,7 +938,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		assertEquals(DataType.UNKNOWN, DataType.lookupClass(byte[].class));
 	}
 
-	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String valStr,
+	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String defaultValStr,
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
 			boolean isComparable, boolean isConvertableId) throws Exception {
@@ -904,10 +955,18 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		} else {
 			Map<String, Integer> colMap = new HashMap<String, Integer>();
 			colMap.put(columnName, colNum);
-			assertEquals(javaVal, fieldType.resultToJava(results, colMap));
+			Object result = fieldType.resultToJava(results, colMap);
+			assertEquals(javaVal, result);
 		}
-		if (dataType != DataType.BYTE_ARRAY && dataType != DataType.SERIALIZABLE && valStr != null) {
-			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, valStr));
+		if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY || dataType == DataType.SERIALIZABLE) {
+			try {
+				dataType.parseDefaultString(fieldType, "");
+				fail("parseDefaultString should have thrown for " + dataType);
+			} catch (SQLException e) {
+				// expected
+			}
+		} else if (defaultValStr != null) {
+			assertEquals(sqlVal, dataType.parseDefaultString(fieldType, defaultValStr));
 		}
 		if (sqlArg == null) {
 			// noop
@@ -941,6 +1000,18 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalLongString {
 		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.LONG_STRING)
+		String string;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalStringBytes {
+		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.STRING_BYTES)
+		String string;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalStringBytesUtf8 {
+		@DatabaseField(columnName = STRING_COLUMN, dataType = DataType.STRING_BYTES, format = "UTF-8")
 		String string;
 	}
 
@@ -1074,6 +1145,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	protected static class LocalEnumInt2 {
 		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_INTEGER)
 		OurEnum2 ourEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalUuid {
+		@DatabaseField(columnName = UUID_COLUMN)
+		UUID uuid;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
