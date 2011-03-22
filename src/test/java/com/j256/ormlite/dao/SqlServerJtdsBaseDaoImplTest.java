@@ -1,6 +1,5 @@
 package com.j256.ormlite.dao;
 
-
 public class SqlServerJtdsBaseDaoImplTest extends JdbcBaseDaoImplTest {
 
 	@Override

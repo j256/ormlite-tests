@@ -1,6 +1,5 @@
 package com.j256.ormlite.stmt;
 
-
 public class HsqldbQueryBuilderTest extends JdbcQueryBuilderTest {
 
 	@Override
