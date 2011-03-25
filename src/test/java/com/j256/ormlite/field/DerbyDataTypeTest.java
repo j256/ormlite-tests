@@ -7,4 +7,9 @@ public class DerbyDataTypeTest extends BaseDataTypeTest {
 		System.setProperty("derby.stream.error.file", "target/derby.log");
 		databaseUrl = "jdbc:derby:target/ormlitederby;create=true";
 	}
+	
+	@Override
+	protected boolean byteArrayComparisonsWork() {
+		return false;
+	}
 }

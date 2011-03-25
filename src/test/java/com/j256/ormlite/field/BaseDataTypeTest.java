@@ -53,6 +53,10 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String UUID_COLUMN = "uuid";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
+	protected boolean byteArrayComparisonsWork() {
+		return true;
+	}
+	
 	@AfterClass
 	public static void afterClass() throws Exception {
 		for (DataType dataType : DataType.values()) {
@@ -99,6 +103,11 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		byte[] valBytes = val.getBytes(Charset.forName(DataType.DEFAULT_STRING_BYTES_CHARSET_NAME));
 		testType(clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
 				false, true, false);
+		if (byteArrayComparisonsWork()) {
+			List<LocalStringBytes> stringBytes = dao.query(dao.queryBuilder().where().eq(STRING_COLUMN, val).prepare());
+			assertEquals(1, stringBytes.size());
+			assertEquals(val, stringBytes.get(0).string);
+		}
 	}
 
 	@Test
