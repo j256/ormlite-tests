@@ -10,7 +10,6 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -56,7 +55,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	protected boolean byteArrayComparisonsWork() {
 		return true;
 	}
-	
+
 	@AfterClass
 	public static void afterClass() throws Exception {
 		for (DataType dataType : DataType.values()) {
@@ -100,7 +99,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalStringBytes foo = new LocalStringBytes();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		byte[] valBytes = val.getBytes(Charset.forName(DataType.DEFAULT_STRING_BYTES_CHARSET_NAME));
+		byte[] valBytes = val.getBytes("Unicode");
 		testType(clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
 				false, true, false);
 		if (byteArrayComparisonsWork()) {
@@ -118,8 +117,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalStringBytesUtf8 foo = new LocalStringBytesUtf8();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val.getBytes(Charset.forName("UTF-8")), val, DataType.STRING_BYTES, STRING_COLUMN,
-				false, false, true, false, true, false, true, false);
+		testType(clazz, val, val, val.getBytes("UTF-8"), val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true,
+				false, true, false, true, false);
 	}
 
 	@Test
