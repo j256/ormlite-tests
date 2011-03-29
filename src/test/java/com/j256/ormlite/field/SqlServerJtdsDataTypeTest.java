@@ -9,4 +9,9 @@ public class SqlServerJtdsDataTypeTest extends BaseDataTypeTest {
 		userName = "gwatson";
 		password = "ormlite";
 	}
+
+	@Override
+	protected boolean byteArrayComparisonsWork() {
+		return false;
+	}
 }
