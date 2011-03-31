@@ -77,6 +77,17 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		dropTable(Foo.class, false);
 	}
 
+	@Test
+	public void testClearTable() throws Exception {
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		assertEquals(0, fooDao.countOf());
+		Foo foo = new Foo();
+		assertEquals(1, fooDao.create(foo));
+		assertEquals(1, fooDao.countOf());
+		TableUtils.clearTable(connectionSource, Foo.class);
+		assertEquals(0, fooDao.countOf());
+	}
+
 	protected static class Foo {
 		@DatabaseField(generatedId = true)
 		int id;
