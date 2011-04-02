@@ -41,6 +41,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String STRING_COLUMN = "string";
 	private static final String BOOLEAN_COLUMN = "bool";
 	private static final String DATE_COLUMN = "date";
+	private static final String CHAR_COLUMN = "charField";
 	private static final String BYTE_COLUMN = "byteField";
 	private static final String SHORT_COLUMN = "shortField";
 	private static final String INT_COLUMN = "intField";
@@ -431,6 +432,32 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 				FieldType.createFieldType(connectionSource, TABLE_NAME,
 						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class, 0);
 		DataType.JAVA_DATE_LONG.parseDefaultString(fieldType, "not valid long number");
+	}
+
+	@Test
+	public void testChar() throws Exception {
+		Class<LocalChar> clazz = LocalChar.class;
+		Dao<LocalChar, Object> dao = createDao(clazz, true);
+		char val = 'w';
+		String valStr = Character.toString(val);
+		LocalChar foo = new LocalChar();
+		foo.charField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.CHAR, CHAR_COLUMN, false, true, true, true, false, false, true,
+				false);
+	}
+
+	@Test
+	public void testCharObj() throws Exception {
+		Class<LocalCharObj> clazz = LocalCharObj.class;
+		Dao<LocalCharObj, Object> dao = createDao(clazz, true);
+		Character val = 'w';
+		String valStr = val.toString();
+		LocalCharObj foo = new LocalCharObj();
+		foo.charField = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, valStr, DataType.CHAR_OBJ, CHAR_COLUMN, false, true, true, false, false, false,
+				true, false);
 	}
 
 	@Test
@@ -1052,6 +1079,18 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	protected static class LocalDateLong {
 		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_LONG)
 		Date date;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalChar {
+		@DatabaseField(columnName = CHAR_COLUMN)
+		char charField;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalCharObj {
+		@DatabaseField(columnName = CHAR_COLUMN)
+		Character charField;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
