@@ -15,6 +15,7 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 
 	@Test(expected = SQLException.class)
 	public void testMissingCreate() throws Exception {
+		dropTable(Foo.class, true);
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, false);
 		fooDao.queryForAll();
 	}
