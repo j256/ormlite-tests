@@ -15,6 +15,10 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 
 	@Test(expected = SQLException.class)
 	public void testMissingCreate() throws Exception {
+		if (connectionSource == null) {
+			throw new SQLException("Simulate a failure");
+		}
+		// we needed to do this because of some race conditions around table clearing
 		dropTable(Foo.class, true);
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, false);
 		fooDao.queryForAll();
