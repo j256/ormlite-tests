@@ -1,7 +1,5 @@
 package com.j256.ormlite.dao;
 
-import java.util.Iterator;
-
 import org.junit.Test;
 
 public class PostgresBaseDaoImplTest extends JdbcBaseDaoImplTest {
@@ -21,12 +19,13 @@ public class PostgresBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
-		Iterator<Foo> iterator = fooDao.iterator();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
 		while (iterator.hasNext()) {
 			iterator.next();
 			// does not break the iterator in postgres
 			closeConnectionSource();
 		}
+		iterator.close();
 	}
 
 	@Test
@@ -36,11 +35,12 @@ public class PostgresBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		Foo foo1 = new Foo();
 		foo1.stuff = "s1";
 		fooDao.create(foo1);
-		Iterator<Foo> iterator = fooDao.iterator();
+		CloseableIterator<Foo> iterator = fooDao.iterator();
 		while (iterator.hasNext()) {
 			// does not close the result set in postgres
 			closeConnectionSource();
 			iterator.next();
 		}
+		iterator.close();
 	}
 }

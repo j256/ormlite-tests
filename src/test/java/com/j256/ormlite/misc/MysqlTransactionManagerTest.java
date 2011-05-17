@@ -1,5 +1,8 @@
 package com.j256.ormlite.misc;
 
+import org.junit.Test;
+
+import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.db.MysqlDatabaseType;
 
 /**
@@ -14,5 +17,16 @@ public class MysqlTransactionManagerTest extends BaseTransactionManagerTest {
 		databaseUrl = "jdbc:mysql://" + databaseHost + "/ormlitetest";
 		userName = "ormlitetest";
 		password = "hibernate";
+	}
+
+	@Override
+	@Test
+	public void testDaoTransactionManagerCommitted() throws Exception {
+		if (connectionSource == null) {
+			return;
+		}
+		TransactionManager mgr = new TransactionManager(connectionSource);
+		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
+		testTransactionManager(mgr, null, fooDao, false);
 	}
 }

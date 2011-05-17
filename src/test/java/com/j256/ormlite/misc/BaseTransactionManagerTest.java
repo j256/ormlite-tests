@@ -10,27 +10,27 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
-import com.j256.ormlite.jdbc.JdbcPooledConnectionSource;
 
 public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 
-	@Override
-	@Before
-	public void before() throws Exception {
-		if (connectionSource != null) {
-			return;
-		}
-		super.before();
-		if (connectionSource != null) {
-			connectionSource = new JdbcPooledConnectionSource(databaseUrl, userName, password);
-		}
-	}
+	// @Override
+	// @Before
+	// public void before() throws Exception {
+	// if (connectionSource != null) {
+	// return;
+	// }
+	// super.before();
+	// if (connectionSource != null) {
+	// closeConnectionSource();
+	// jdbcConnectionSource = new JdbcPooledConnectionSource(databaseUrl, userName, password);
+	// connectionSource = new WrappedConnectionSource(connectionSource);
+	// }
+	// }
 
 	/* ============================================================================================================== */
 
@@ -154,7 +154,7 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		assertEquals(0, fooList.size());
 	}
 
-	private void testTransactionManager(TransactionManager mgr, final Exception exception,
+	protected void testTransactionManager(TransactionManager mgr, final Exception exception,
 			final Dao<Foo, Integer> fooDao, boolean inner) throws Exception {
 		final Foo foo1 = new Foo();
 		String stuff = "stuff";
