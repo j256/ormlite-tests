@@ -7,9 +7,11 @@ running inside of Ormlite itself because they require database support that will
 available to all developers.  These tests actually contact mysql, postgres, mssql, and other
 databases that are available to the author.
 
-Gray Watson
+For more information, see the online documentation on the home page:
 
-http://ormlite.sourceforge.net/
-http://256.com/gray/
+   http://ormlite.com/
+
+Enjoy,
+Gray Watson
 
 -------------------------------------------------------------------------------------------------------
