@@ -55,7 +55,7 @@ public class ThreadLocalSelectArgTest {
 				public void run() {
 					arg.setValue(num);
 					// try N queries each looking for this thread's val field
-					for (int j = 0; j < 100000; j++) {
+					for (int j = 0; j < 1000; j++) {
 						Foo result;
 						try {
 							result = dao.queryForFirst(query);

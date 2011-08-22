@@ -18,20 +18,6 @@ import com.j256.ormlite.field.DatabaseField;
 
 public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 
-	// @Override
-	// @Before
-	// public void before() throws Exception {
-	// if (connectionSource != null) {
-	// return;
-	// }
-	// super.before();
-	// if (connectionSource != null) {
-	// closeConnectionSource();
-	// jdbcConnectionSource = new JdbcPooledConnectionSource(databaseUrl, userName, password);
-	// connectionSource = new WrappedConnectionSource(connectionSource);
-	// }
-	// }
-
 	/* ============================================================================================================== */
 
 	@Test
