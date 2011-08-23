@@ -104,7 +104,7 @@
 		<hsqldb-version>1.8.0.10</hsqldb-version>
 		<jtds-version>1.2.4</jtds-version>
 		<log4j-version>1.2.15</log4j-version>
-		<ormlite-version>4.25-SNAPSHOT</ormlite-version>
+		<ormlite-version>4.26-SNAPSHOT</ormlite-version>
 	</properties>
 	<dependencies>
 		<dependency>
