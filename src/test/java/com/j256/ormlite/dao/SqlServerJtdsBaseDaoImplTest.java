@@ -12,7 +12,7 @@ public class SqlServerJtdsBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		userName = "gwatson";
 		password = "ormlite";
 	}
-	
+
 	@Test
 	@Override
 	@Ignore
