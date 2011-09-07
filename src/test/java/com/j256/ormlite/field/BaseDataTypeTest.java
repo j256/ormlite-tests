@@ -251,7 +251,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);
 			DataType.DATE_STRING.getDataPersister().resultToJava(null, results, colNum);
@@ -693,7 +693,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			FieldType fieldType =
 					FieldType.createFieldType(connectionSource, TABLE_NAME,
@@ -724,7 +724,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			FieldType fieldType =
 					FieldType.createFieldType(connectionSource, TABLE_NAME,
@@ -773,7 +773,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			assertEquals(val.toString(),
 					DataType.ENUM_STRING.getDataPersister()
@@ -821,7 +821,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			assertEquals(
 					val.ordinal(),
@@ -864,7 +864,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		CompiledStatement stmt = null;
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes);
-			DatabaseResults results = stmt.runQuery();
+			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(columnName);
 			FieldType fieldType =
