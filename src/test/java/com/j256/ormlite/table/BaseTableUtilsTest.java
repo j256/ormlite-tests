@@ -13,7 +13,7 @@ import com.j256.ormlite.field.DatabaseField;
 
 public class BaseTableUtilsTest extends BaseJdbcTest {
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testMissingCreate() throws Exception {
 		if (connectionSource == null) {
 			throw new SQLException("Simulate a failure");
@@ -21,7 +21,12 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		// we needed to do this because of some race conditions around table clearing
 		dropTable(Foo.class, true);
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, false);
-		fooDao.queryForAll();
+		try {
+			fooDao.queryForAll();
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -46,15 +51,20 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		dropTable(Foo.class, true);
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDropThenQuery() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		assertEquals(0, fooDao.queryForAll().size());
 		dropTable(Foo.class, true);
-		fooDao.queryForAll();
+		try {
+			fooDao.queryForAll();
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testRawExecuteDropThenQuery() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		StringBuilder sb = new StringBuilder();
@@ -66,10 +76,15 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		}
 		// can't check the return value because of sql-server
 		fooDao.executeRaw(sb.toString());
-		fooDao.queryForAll();
+		try {
+			fooDao.queryForAll();
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
-	@Test(expected = SQLException.class)
+	@Test
 	public void testDoubleDrop() throws Exception {
 		Dao<Foo, Integer> fooDao = createDao(Foo.class, false);
 		// first we create the table
@@ -79,7 +94,12 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		// now we drop it
 		dropTable(Foo.class, true);
 		// this should fail
-		dropTable(Foo.class, false);
+		try {
+			dropTable(Foo.class, false);
+			fail("Should have thrown");
+		} catch (SQLException e) {
+			// expected
+		}
 	}
 
 	@Test
@@ -90,6 +110,27 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		assertEquals(1, fooDao.create(foo));
 		assertEquals(1, fooDao.countOf());
 		TableUtils.clearTable(connectionSource, Foo.class);
+		assertEquals(0, fooDao.countOf());
+	}
+
+	@Test
+	public void testCreateTableConfigIfNotExists() throws Exception {
+		if (databaseType == null || !databaseType.isCreateIfNotExistsSupported()) {
+			return;
+		}
+		TableUtils.dropTable(connectionSource, Foo.class, true);
+		Dao<Foo, Integer> fooDao = createDao(Foo.class, false);
+		try {
+			fooDao.countOf();
+			fail("Should have thrown an exception");
+		} catch (Exception e) {
+			// ignored
+		}
+		DatabaseTableConfig<Foo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
+		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
+		assertEquals(0, fooDao.countOf());
+		// should not throw
+		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
 		assertEquals(0, fooDao.countOf());
 	}
 
