@@ -16,7 +16,7 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 	@Test
 	public void testMissingCreate() throws Exception {
 		if (connectionSource == null) {
-			throw new SQLException("Simulate a failure");
+			return;
 		}
 		// we needed to do this because of some race conditions around table clearing
 		dropTable(Foo.class, true);
@@ -115,7 +115,7 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateTableConfigIfNotExists() throws Exception {
-		if (databaseType == null || !databaseType.isCreateIfNotExistsSupported()) {
+		if (databaseType == null || connectionSource == null || !databaseType.isCreateIfNotExistsSupported()) {
 			return;
 		}
 		TableUtils.dropTable(connectionSource, Foo.class, true);
