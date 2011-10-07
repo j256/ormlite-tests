@@ -9,6 +9,8 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -51,6 +53,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String SERIALIZABLE_COLUMN = "serializable";
 	private static final String ENUM_COLUMN = "ourEnum";
 	private static final String UUID_COLUMN = "uuid";
+	private static final String BIG_INTEGER_COLUMN = "biginteger";
+	private static final String BIG_DECIMAL_COLUMN = "bigdecimal";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	protected boolean byteArrayComparisonsWork() {
@@ -849,6 +853,32 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testBigInteger() throws Exception {
+		Class<LocalBigInteger> clazz = LocalBigInteger.class;
+		Dao<LocalBigInteger, Object> dao = createDao(clazz, true);
+		LocalBigInteger foo = new LocalBigInteger();
+		BigInteger val = new BigInteger("1831209831203891238190381203");
+		foo.biginteger = val;
+		assertEquals(1, dao.create(foo));
+		String valStr = val.toString();
+		testType(clazz, val, val, valStr, valStr, DataType.BIG_INTEGER, BIG_INTEGER_COLUMN, false, false, true, false,
+				false, false, true, false);
+	}
+
+	@Test
+	public void testBigDecimal() throws Exception {
+		Class<LocalBigDecimal> clazz = LocalBigDecimal.class;
+		Dao<LocalBigDecimal, Object> dao = createDao(clazz, true);
+		LocalBigDecimal foo = new LocalBigDecimal();
+		BigDecimal val = new BigDecimal("18312098312038912.3443223438190381203");
+		foo.bigdecimal = val;
+		assertEquals(1, dao.create(foo));
+		String valStr = val.toString();
+		testType(clazz, val, val, valStr, valStr, DataType.BIG_DECIMAL, BIG_DECIMAL_COLUMN, false, false, true, false,
+				false, false, true, false);
+	}
+
+	@Test
 	public void testUnknownGetResult() throws Exception {
 		DataType dataType = DataType.UNKNOWN;
 		assertNull(dataType.getDataPersister());
@@ -1090,6 +1120,18 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	protected static class LocalUuid {
 		@DatabaseField(columnName = UUID_COLUMN)
 		UUID uuid;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalBigInteger {
+		@DatabaseField(columnName = BIG_INTEGER_COLUMN)
+		BigInteger biginteger;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalBigDecimal {
+		@DatabaseField(columnName = BIG_DECIMAL_COLUMN)
+		BigDecimal bigdecimal;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
