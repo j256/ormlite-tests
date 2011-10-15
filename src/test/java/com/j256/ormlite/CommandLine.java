@@ -60,7 +60,7 @@ public class CommandLine {
 		}
 	}
 
-	private void executeStatement(Connection connection, String statement) throws SQLException {
+	private void executeStatement(Connection connection, String statement) {
 		try {
 			PreparedStatement stmt = connection.prepareStatement(statement);
 			if (statement.startsWith("select")) {
