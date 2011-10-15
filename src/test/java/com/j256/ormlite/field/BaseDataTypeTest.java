@@ -12,6 +12,7 @@ import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -195,8 +196,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalDate foo = new LocalDate();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true,
-				false);
+		testType(clazz, val, new Timestamp(val.getTime()), new Timestamp(val.getTime()), valStr, DataType.DATE,
+				DATE_COLUMN, false, true, true, false, true, false, true, false);
 	}
 
 	@Test
@@ -925,6 +926,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 				assertTrue(Arrays.equals((byte[]) sqlArg, (byte[]) dataPersister.javaToSqlArg(fieldType, javaVal)));
 			} else {
 				assertEquals(sqlArg, dataPersister.javaToSqlArg(fieldType, javaVal));
+				assertEquals(javaVal, dataPersister.sqlArgToJava(fieldType, sqlArg, 0));
 			}
 			assertEquals(isValidGeneratedType, dataPersister.isValidGeneratedType());
 			assertEquals(isAppropriateId, dataPersister.isAppropriateId());
