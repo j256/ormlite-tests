@@ -1,0 +1,13 @@
+<projectDescription>
+  <name>ormliteTest</name>
+  <comment>Lightweight Object Relational Model (ORM) tests</comment>
+  <projects/>
+  <buildSpec>
+    <buildCommand>
+      <name>org.eclipse.jdt.core.javabuilder</name>
+    </buildCommand>
+  </buildSpec>
+  <natures>
+    <nature>org.eclipse.jdt.core.javanature</nature>
+  </natures>
+</projectDescription>
