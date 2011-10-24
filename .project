@@ -1,7 +1,10 @@
 <projectDescription>
   <name>ormliteTest</name>
   <comment>Lightweight Object Relational Model (ORM) tests</comment>
-  <projects/>
+  <projects>
+    <project>ormlite-core</project>
+    <project>ormlite-jdbc</project>
+  </projects>
   <buildSpec>
     <buildCommand>
       <name>org.eclipse.jdt.core.javabuilder</name>
