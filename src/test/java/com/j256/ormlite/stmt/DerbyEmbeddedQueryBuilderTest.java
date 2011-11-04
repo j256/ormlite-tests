@@ -29,8 +29,7 @@ public class DerbyEmbeddedQueryBuilderTest extends JdbcQueryBuilderTest {
 		assertEquals(2, dao.queryForAll().size());
 
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
-		int offset = 1;
-		qb.offset(offset);
+		qb.offset(1L);
 		List<Foo> results = dao.query(qb.prepare());
 		assertEquals(1, results.size());
 	}

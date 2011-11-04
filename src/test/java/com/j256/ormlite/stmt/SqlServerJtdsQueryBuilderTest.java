@@ -21,8 +21,8 @@ public class SqlServerJtdsQueryBuilderTest extends JdbcQueryBuilderTest {
 	public void testOffsetWithLimit() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
-		qb.limit(1);
-		qb.offset(1);
+		qb.limit(1L);
+		qb.offset(1L);
 	}
 
 	@Override
@@ -30,6 +30,6 @@ public class SqlServerJtdsQueryBuilderTest extends JdbcQueryBuilderTest {
 	public void testOffsetNoLimit() throws Exception {
 		Dao<Foo, Object> dao = createDao(Foo.class, true);
 		QueryBuilder<Foo, Object> qb = dao.queryBuilder();
-		qb.offset(1);
+		qb.offset(1L);
 	}
 }
