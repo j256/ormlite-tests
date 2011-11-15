@@ -134,10 +134,37 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		assertEquals(0, fooDao.countOf());
 	}
 
+	@Test
+	public void testCreateTableIfNotExistsWithIndex() throws Exception {
+		if (databaseType == null || connectionSource == null || !databaseType.isCreateIfNotExistsSupported()) {
+			return;
+		}
+		dropTable(CreateTableIfNotExistsWithIndex.class, true);
+		Dao<CreateTableIfNotExistsWithIndex, Integer> dao = createDao(CreateTableIfNotExistsWithIndex.class, false);
+		try {
+			dao.countOf();
+			fail("Should have thrown an exception");
+		} catch (Exception e) {
+			// ignored
+		}
+		TableUtils.createTableIfNotExists(connectionSource, CreateTableIfNotExistsWithIndex.class);
+		assertEquals(0, dao.countOf());
+		// should not throw
+		TableUtils.createTableIfNotExists(connectionSource, CreateTableIfNotExistsWithIndex.class);
+		assertEquals(0, dao.countOf());
+	}
+
 	protected static class Foo {
 		@DatabaseField(generatedId = true)
 		int id;
 		@DatabaseField
+		String name;
+	}
+
+	protected static class CreateTableIfNotExistsWithIndex {
+		@DatabaseField
+		int id;
+		@DatabaseField(index = true)
 		String name;
 	}
 }
