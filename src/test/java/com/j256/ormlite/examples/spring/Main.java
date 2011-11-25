@@ -30,6 +30,7 @@ public class Main {
 		ClassPathXmlApplicationContext context = null;
 		try {
 			context = new ClassPathXmlApplicationContext(configNames);
+			System.out.println("Seemed to have loaded the context correctly");
 			// we exit immediately after loading the context -- usually main hangs around
 		} catch (Throwable th) {
 			throw new Exception("Unable to load the main context", th);

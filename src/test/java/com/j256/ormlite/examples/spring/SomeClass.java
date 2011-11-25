@@ -38,6 +38,7 @@ public class SomeClass implements InitializingBean {
 		if (accountDao.create(account) != 1) {
 			throw new Exception("Could not create Account in database");
 		}
+		System.out.println("Created account: " + name);
 
 		// make sure we can read it back
 		Account account2 = accountDao.queryForId(account.getId());
@@ -46,6 +47,7 @@ public class SomeClass implements InitializingBean {
 		}
 		assertEquals("expected name does not equal account name", account.getName(), account2.getName());
 		assertEquals("expected password does not equal account name", account.getPassword(), account2.getPassword());
+		System.out.println("Queried for account: " + name);
 
 		try {
 			// try something in a transaction
@@ -71,6 +73,7 @@ public class SomeClass implements InitializingBean {
 		assertEquals(1, deliveryDao.create(delivery));
 		Delivery delivery2 = deliveryDao.queryForId(delivery.getId());
 		assertNotNull(delivery2);
+		System.out.println("Create a delivery: " + delivery.getId());
 
 		// see Main in the simple example for more use examples
 	}
