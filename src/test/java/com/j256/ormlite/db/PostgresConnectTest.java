@@ -21,7 +21,7 @@ public class PostgresConnectTest extends PostgresDatabaseTypeTest {
 	}
 
 	@Override
-	public void testEscapedEntityName() throws Exception {
+	public void testEscapedEntityName() {
 		super.testEscapedEntityName();
 	}
 }

@@ -29,21 +29,21 @@ public class DerbyEmbeddedBaseDaoImplTest extends JdbcBaseDaoImplTest {
 	@Override
 	@Test
 	@Ignore
-	public void testCloseInIterator() throws Exception {
+	public void testCloseInIterator() {
 		// Seem like this causes some sort of memory fault under derby
 	}
 
 	@Override
 	@Test
 	@Ignore
-	public void testCloseIteratorBeforeNext() throws Exception {
+	public void testCloseIteratorBeforeNext() {
 		// Seem like this causes some sort of memory fault under derby
 	}
 
 	@Override
 	@Test
 	@Ignore
-	public void testCloseIteratorBeforeRemove() throws Exception {
+	public void testCloseIteratorBeforeRemove() {
 		// Seem like this causes some sort of memory fault under derby
 	}
 

@@ -508,7 +508,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testIntConvertId() throws Exception {
+	public void testIntConvertId() {
 		int intId = 213123123;
 		long longId = new Long(intId);
 		assertEquals(intId, DataType.INTEGER.getDataPersister().convertIdNumber(longId));
@@ -562,7 +562,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testLongConvertId() throws Exception {
+	public void testLongConvertId() {
 		long longId = new Long(1312313123131L);
 		assertEquals(longId, DataType.LONG.getDataPersister().convertIdNumber(longId));
 	}
@@ -880,7 +880,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testUnknownGetResult() throws Exception {
+	public void testUnknownGetResult() {
 		DataType dataType = DataType.UNKNOWN;
 		assertNull(dataType.getDataPersister());
 		dataTypeSet.add(dataType);
