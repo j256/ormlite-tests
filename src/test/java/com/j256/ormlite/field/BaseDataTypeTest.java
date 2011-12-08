@@ -933,7 +933,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 			assertEquals(isEscapedValue, dataPersister.isEscapedValue());
 			assertEquals(isEscapedValue, dataPersister.isEscapedDefaultValue());
 			assertEquals(isPrimitive, dataPersister.isPrimitive());
-			assertEquals(isSelectArgRequired, dataPersister.isSelectArgRequired());
+			assertEquals(isSelectArgRequired, dataPersister.isArgumentHolderRequired());
 			assertEquals(isStreamType, dataPersister.isStreamType());
 			assertEquals(isComparable, dataPersister.isComparable());
 			if (isConvertableId) {
