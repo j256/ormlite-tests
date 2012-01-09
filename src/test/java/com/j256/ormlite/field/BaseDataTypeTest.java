@@ -56,6 +56,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String UUID_COLUMN = "uuid";
 	private static final String BIG_INTEGER_COLUMN = "biginteger";
 	private static final String BIG_DECIMAL_COLUMN = "bigdecimal";
+	private static final String BIG_DECIMAL_NUMBERIC_COLUMN = "bigdecimalnumeric";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	protected boolean byteArrayComparisonsWork() {
@@ -880,6 +881,19 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testBigDecimalNumeric() throws Exception {
+		Class<LocalBigDecimalNumeric> clazz = LocalBigDecimalNumeric.class;
+		Dao<LocalBigDecimalNumeric, Object> dao = createDao(clazz, true);
+		LocalBigDecimalNumeric foo = new LocalBigDecimalNumeric();
+		BigDecimal val = new BigDecimal("183124242432098312038912.3443223438190424234381203");
+		foo.bigdecimalnumeric = val;
+		assertEquals(1, dao.create(foo));
+		String valStr = val.toString();
+		testType(clazz, val, val, val, valStr, DataType.BIG_DECIMAL_NUMERIC, BIG_DECIMAL_NUMBERIC_COLUMN, false, false,
+				false, false, false, false, true, false);
+	}
+
+	@Test
 	public void testUnknownGetResult() {
 		DataType dataType = DataType.UNKNOWN;
 		assertNull(dataType.getDataPersister());
@@ -1134,6 +1148,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	protected static class LocalBigDecimal {
 		@DatabaseField(columnName = BIG_DECIMAL_COLUMN)
 		BigDecimal bigdecimal;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalBigDecimalNumeric {
+		@DatabaseField(columnName = BIG_DECIMAL_NUMBERIC_COLUMN)
+		BigDecimal bigdecimalnumeric;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
