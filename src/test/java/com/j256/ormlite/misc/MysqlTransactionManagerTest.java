@@ -26,7 +26,7 @@ public class MysqlTransactionManagerTest extends BaseTransactionManagerTest {
 			return;
 		}
 		TransactionManager mgr = new TransactionManager(connectionSource);
-		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
-		testTransactionManager(mgr, null, fooDao, false);
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		testTransactionManager(mgr, null, dao, false);
 	}
 }

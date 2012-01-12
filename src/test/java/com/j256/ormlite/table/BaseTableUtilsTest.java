@@ -136,7 +136,7 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 
 	@Test
 	public void testCreateTableIfNotExistsWithIndex() throws Exception {
-		if (databaseType == null || connectionSource == null || !databaseType.isCreateIfNotExistsSupported()) {
+		if (databaseType == null || connectionSource == null || !databaseType.isCreateIndexIfNotExistsSupported()) {
 			return;
 		}
 		dropTable(CreateTableIfNotExistsWithIndex.class, true);
