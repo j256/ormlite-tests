@@ -52,6 +52,12 @@ public class SqliteBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		assertEquals(1, list.size());
 		assertEquals(newVal, list.get(0).age);
 	}
+	
+	@Override
+	@Test
+	public void testIteratorMove() {
+		// noop because SQLite only supports forward
+	}
 
 	@DatabaseTable(tableName = FOO_TABLE_NAME)
 	protected static class FooAge extends Foo {
