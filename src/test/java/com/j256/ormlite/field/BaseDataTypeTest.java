@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.Test;
 
@@ -54,9 +55,10 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String SERIALIZABLE_COLUMN = "serializable";
 	private static final String ENUM_COLUMN = "ourEnum";
 	private static final String UUID_COLUMN = "uuid";
-	private static final String BIG_INTEGER_COLUMN = "biginteger";
-	private static final String BIG_DECIMAL_COLUMN = "bigdecimal";
-	private static final String BIG_DECIMAL_NUMBERIC_COLUMN = "bigdecimalnumeric";
+	private static final String BIG_INTEGER_COLUMN = "bigInteger";
+	private static final String BIG_DECIMAL_COLUMN = "bigDecimal";
+	private static final String BIG_DECIMAL_NUMBERIC_COLUMN = "bigDecimalNumeric";
+	private static final String DATE_TIME_COLUMN = "dateTime";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	protected boolean byteArrayComparisonsWork() {
@@ -860,7 +862,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Dao<LocalBigInteger, Object> dao = createDao(clazz, true);
 		LocalBigInteger foo = new LocalBigInteger();
 		BigInteger val = new BigInteger("1831209831203891238190381203");
-		foo.biginteger = val;
+		foo.bigInteger = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
 		testType(clazz, val, val, valStr, valStr, DataType.BIG_INTEGER, BIG_INTEGER_COLUMN, false, false, true, false,
@@ -873,7 +875,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Dao<LocalBigDecimal, Object> dao = createDao(clazz, true);
 		LocalBigDecimal foo = new LocalBigDecimal();
 		BigDecimal val = new BigDecimal("18312098312038912.3443223438190381203");
-		foo.bigdecimal = val;
+		foo.bigDecimal = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
 		testType(clazz, val, val, valStr, valStr, DataType.BIG_DECIMAL, BIG_DECIMAL_COLUMN, false, false, true, false,
@@ -886,7 +888,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Dao<LocalBigDecimalNumeric, Object> dao = createDao(clazz, true);
 		LocalBigDecimalNumeric foo = new LocalBigDecimalNumeric();
 		BigDecimal val = new BigDecimal("183124242432098312038912.3443223438190424234381203");
-		foo.bigdecimalnumeric = val;
+		foo.bigDecimalNumeric = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
 		testType(clazz, val, val, val, valStr, DataType.BIG_DECIMAL_NUMERIC, BIG_DECIMAL_NUMBERIC_COLUMN, false, false,
@@ -894,7 +896,21 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testUnknownGetResult() {
+	public void testUnknownGetResult() throws Exception {
+		Class<LocalDateTime> clazz = LocalDateTime.class;
+		Dao<LocalDateTime, Object> dao = createDao(clazz, true);
+		LocalDateTime foo = new LocalDateTime();
+		DateTime val = new DateTime();
+		foo.dateTime = val;
+		assertEquals(1, dao.create(foo));
+		long sqlVal = val.getMillis();
+		String valStr = Long.toString(sqlVal);
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.DATE_TIME, DATE_TIME_COLUMN, false, false, false, false,
+				false, false, true, false);
+	}
+
+	@Test
+	public void testDateTime() {
 		DataType dataType = DataType.UNKNOWN;
 		assertNull(dataType.getDataPersister());
 		dataTypeSet.add(dataType);
@@ -1141,19 +1157,25 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigInteger {
 		@DatabaseField(columnName = BIG_INTEGER_COLUMN)
-		BigInteger biginteger;
+		BigInteger bigInteger;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigDecimal {
 		@DatabaseField(columnName = BIG_DECIMAL_COLUMN)
-		BigDecimal bigdecimal;
+		BigDecimal bigDecimal;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalBigDecimalNumeric {
 		@DatabaseField(columnName = BIG_DECIMAL_NUMBERIC_COLUMN)
-		BigDecimal bigdecimalnumeric;
+		BigDecimal bigDecimalNumeric;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalDateTime {
+		@DatabaseField(columnName = DATE_TIME_COLUMN)
+		DateTime dateTime;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
