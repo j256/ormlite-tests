@@ -47,6 +47,12 @@ public class DerbyEmbeddedBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		// Seem like this causes some sort of memory fault under derby
 	}
 
+	@Test
+	@Override
+	public void testCloseIteratorFirst() {
+		// noop
+	}
+
 	@DatabaseTable(tableName = "mixedCaseTable")
 	protected static class MixedCase {
 		@DatabaseField(columnName = MIXED_CASE_TABLE_NAME)

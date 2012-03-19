@@ -30,4 +30,10 @@ public class HsqldbBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		MixedCase() {
 		}
 	}
+	
+	@Test
+	@Override
+	public void testCloseIteratorFirst() {
+		// noop
+	}
 }
