@@ -4,6 +4,6 @@ public class SqliteTransactionManagerTest extends BaseTransactionManagerTest {
 
 	@Override
 	protected void setDatabaseParams() {
-		databaseUrl = "jdbc:sqlite:";
+		databaseUrl = "jdbc:sqlite:target/sqliteTransactionManagerTest";
 	}
 }

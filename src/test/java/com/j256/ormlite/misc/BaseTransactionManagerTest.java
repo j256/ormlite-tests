@@ -140,6 +140,26 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		assertEquals(0, fooList.size());
 	}
 
+	@Test
+	public void testAutoCommitOff() throws Exception {
+		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
+		final Foo foo = new Foo();
+		foo.stuff = "stuffery";
+		dao.setAutoCommit(false);
+		TransactionManager.callInTransaction(connectionSource, new Callable<Void>() {
+			public Void call() throws Exception {
+				assertEquals(1, dao.create(foo));
+				return null;
+			}
+		});
+		// close and open the connection
+		closeConnectionSource();
+		openConnectionSource();
+		Foo result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.stuff, result.stuff);
+	}
+
 	protected void testTransactionManager(TransactionManager mgr, final Exception exception,
 			final Dao<Foo, Integer> fooDao, boolean inner) throws Exception {
 		final Foo foo1 = new Foo();

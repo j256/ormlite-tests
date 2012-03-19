@@ -13,7 +13,7 @@ public class HsqldbBaseDaoImplTest extends JdbcBaseDaoImplTest {
 
 	@Override
 	protected void setDatabaseParams() {
-		databaseUrl = "jdbc:hsqldb:mem:ormlitehsqldb";
+		databaseUrl = "jdbc:hsqldb:target/hsqldbBaseDaoImplTest";
 	}
 
 	@Test
