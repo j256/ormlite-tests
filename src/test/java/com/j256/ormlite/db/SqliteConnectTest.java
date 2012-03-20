@@ -1,6 +1,7 @@
 package com.j256.ormlite.db;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 import org.junit.Test;
@@ -50,6 +51,20 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		assertEquals(foo.stuff, result.stuff);
 	}
 
+	@Test
+	public void testWierdColumnNames() throws Exception {
+		Dao<WeirdColumnNames, Object> dao = createDao(WeirdColumnNames.class, true);
+		WeirdColumnNames foo = new WeirdColumnNames();
+		foo.stuff = "peowjfpwjfowefwe";
+		assertEquals(1, dao.create(foo));
+
+		WeirdColumnNames result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertEquals(foo.stuff, result.stuff);
+	}
+
+	/* ==================================================================== */
+
 	protected static class IntAutoIncrement {
 		@DatabaseField(generatedId = true)
 		int id;
@@ -65,6 +80,15 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		@DatabaseField
 		String stuff;
 		public LongAutoIncrement() {
+		}
+	}
+
+	protected static class WeirdColumnNames {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField(columnName = "foo.bar")
+		String stuff;
+		public WeirdColumnNames() {
 		}
 	}
 }
