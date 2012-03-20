@@ -52,7 +52,7 @@ public class SqliteBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		assertEquals(1, list.size());
 		assertEquals(newVal, list.get(0).age);
 	}
-	
+
 	@Override
 	@Test
 	public void testIteratorMove() {

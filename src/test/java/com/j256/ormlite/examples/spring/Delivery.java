@@ -2,6 +2,7 @@ package com.j256.ormlite.examples.spring;
 
 import java.util.Date;
 
+import com.j256.ormlite.examples.fieldConfig.FieldConfigMain;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.DatabaseFieldConfig;
 
