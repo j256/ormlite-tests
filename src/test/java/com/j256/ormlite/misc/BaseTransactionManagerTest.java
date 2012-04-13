@@ -15,6 +15,7 @@ import org.junit.Test;
 import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.support.DatabaseConnection;
 
 public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 
@@ -145,19 +146,24 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		final Dao<Foo, Integer> dao = createDao(Foo.class, true);
 		final Foo foo = new Foo();
 		foo.stuff = "stuffery";
-		dao.setAutoCommit(false);
-		TransactionManager.callInTransaction(connectionSource, new Callable<Void>() {
-			public Void call() throws Exception {
-				assertEquals(1, dao.create(foo));
-				return null;
-			}
-		});
-		// close and open the connection
-		closeConnectionSource();
-		openConnectionSource();
-		Foo result = dao.queryForId(foo.id);
-		assertNotNull(result);
-		assertEquals(foo.stuff, result.stuff);
+		DatabaseConnection conn = dao.startThreadConnection();
+		try {
+			dao.setAutoCommit(conn, false);
+			TransactionManager.callInTransaction(connectionSource, new Callable<Void>() {
+				public Void call() throws Exception {
+					assertEquals(1, dao.create(foo));
+					return null;
+				}
+			});
+			// close and open the connection
+			closeConnectionSource();
+			openConnectionSource();
+			Foo result = dao.queryForId(foo.id);
+			assertNotNull(result);
+			assertEquals(foo.stuff, result.stuff);
+		} finally {
+			dao.endThreadConnection(conn);
+		}
 	}
 
 	protected void testTransactionManager(TransactionManager mgr, final Exception exception,
