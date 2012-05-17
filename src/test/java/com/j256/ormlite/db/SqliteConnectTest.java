@@ -4,10 +4,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
+import java.io.Serializable;
+
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.UpdateBuilder;
 
 /**
  * Does tests on a real database connection. I didn't want to have to require someone to have have downloaded derby
@@ -63,6 +67,42 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		assertEquals(foo.stuff, result.stuff);
 	}
 
+	@Test
+	public void testUpdateBuilderSerializable() throws Exception {
+		Dao<SerializedUpdate, Integer> dao = createDao(SerializedUpdate.class, true);
+		SerializedUpdate foo = new SerializedUpdate();
+		SerializedField serialized1 = new SerializedField("wow");
+		foo.serialized = serialized1;
+		assertEquals(1, dao.create(foo));
+
+		SerializedUpdate result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertNotNull(result.serialized);
+		assertEquals(serialized1.foo, result.serialized.foo);
+
+		// update with dao.update
+		SerializedField serialized2 = new SerializedField("zip");
+		foo.serialized = serialized2;
+		assertEquals(1, dao.update(foo));
+
+		result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertNotNull(result.serialized);
+		assertEquals(serialized2.foo, result.serialized.foo);
+
+		// update with UpdateBuilder
+		SerializedField serialized3 = new SerializedField("crack");
+		UpdateBuilder<SerializedUpdate, Integer> ub = dao.updateBuilder();
+		ub.updateColumnValue(SerializedUpdate.SERIALIZED_FIELD_NAME, serialized3);
+		ub.where().idEq(foo.id);
+		assertEquals(1, ub.update());
+
+		result = dao.queryForId(foo.id);
+		assertNotNull(result);
+		assertNotNull(result.serialized);
+		assertEquals(serialized3.foo, result.serialized.foo);
+	}
+
 	/* ==================================================================== */
 
 	protected static class IntAutoIncrement {
@@ -89,6 +129,24 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		@DatabaseField(columnName = "foo.bar")
 		String stuff;
 		public WeirdColumnNames() {
+		}
+	}
+
+	protected static class SerializedUpdate {
+		public final static String SERIALIZED_FIELD_NAME = "serialized";
+		@DatabaseField(generatedId = true)
+		public int id;
+		@DatabaseField(dataType = DataType.SERIALIZABLE, columnName = SERIALIZED_FIELD_NAME)
+		public SerializedField serialized;
+		public SerializedUpdate() {
+		}
+	}
+
+	protected static class SerializedField implements Serializable {
+		private static final long serialVersionUID = 4531762180289888888L;
+		String foo;
+		public SerializedField(String foo) {
+			this.foo = foo;
 		}
 	}
 }
