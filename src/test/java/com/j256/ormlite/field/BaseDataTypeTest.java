@@ -59,6 +59,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String BIG_DECIMAL_COLUMN = "bigDecimal";
 	private static final String BIG_DECIMAL_NUMBERIC_COLUMN = "bigDecimalNumeric";
 	private static final String DATE_TIME_COLUMN = "dateTime";
+	private static final String SQL_DATE_COLUMN = "sqlDate";
+	private static final String TIME_STAMP_COLUMN = "timestamp";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	protected boolean byteArrayComparisonsWork() {
@@ -896,6 +898,33 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
+	public void testSqlDate() throws Exception {
+		Class<LocalSqlDate> clazz = LocalSqlDate.class;
+		Dao<LocalSqlDate, Object> dao = createDao(clazz, true);
+		LocalSqlDate foo = new LocalSqlDate();
+		// Date is rounded to midnight but timestamp isn't
+		long millis = new DateTime().withTime(0, 0, 0, 0).getMillis();
+		java.sql.Date val = new java.sql.Date(millis);
+		foo.sqlDate = val;
+		assertEquals(1, dao.create(foo));
+		Timestamp sqlVal = new java.sql.Timestamp(val.getTime());
+		testType(clazz, val, sqlVal, sqlVal, sqlVal.toString(), DataType.SQL_DATE, SQL_DATE_COLUMN, false, true, true,
+				false, true, false, true, false);
+	}
+
+	@Test
+	public void testTimestamp() throws Exception {
+		Class<LocalTimestamp> clazz = LocalTimestamp.class;
+		Dao<LocalTimestamp, Object> dao = createDao(clazz, true);
+		LocalTimestamp foo = new LocalTimestamp();
+		java.sql.Timestamp val = new java.sql.Timestamp(System.currentTimeMillis());
+		foo.timestamp = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, val, val, val.toString(), DataType.TIME_STAMP, TIME_STAMP_COLUMN, false, true, true,
+				false, true, false, true, false);
+	}
+
+	@Test
 	public void testUnknownGetResult() throws Exception {
 		Class<LocalDateTime> clazz = LocalDateTime.class;
 		Dao<LocalDateTime, Object> dao = createDao(clazz, true);
@@ -1176,6 +1205,18 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	protected static class LocalDateTime {
 		@DatabaseField(columnName = DATE_TIME_COLUMN)
 		DateTime dateTime;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalSqlDate {
+		@DatabaseField(columnName = SQL_DATE_COLUMN)
+		java.sql.Date sqlDate;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalTimestamp {
+		@DatabaseField(columnName = TIME_STAMP_COLUMN)
+		java.sql.Timestamp timestamp;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
