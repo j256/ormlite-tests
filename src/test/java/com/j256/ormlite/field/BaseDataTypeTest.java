@@ -917,7 +917,9 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalTimestamp> clazz = LocalTimestamp.class;
 		Dao<LocalTimestamp, Object> dao = createDao(clazz, true);
 		LocalTimestamp foo = new LocalTimestamp();
-		java.sql.Timestamp val = new java.sql.Timestamp(System.currentTimeMillis());
+		// sql server looks like it has deciseconds resolution
+		long time = new DateTime().withMillis(0).getMillis();
+		java.sql.Timestamp val = new java.sql.Timestamp(time);
 		foo.timestamp = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, val.toString(), DataType.TIME_STAMP, TIME_STAMP_COLUMN, false, true, true,
