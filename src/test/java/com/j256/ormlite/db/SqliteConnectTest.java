@@ -5,12 +5,18 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 
 /**
@@ -103,6 +109,29 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		assertEquals(serialized3.foo, result.serialized.foo);
 	}
 
+	@Test
+	public void testDateStrftime() throws Exception {
+		Dao<DateStrftime, Object> dao = createDao(DateStrftime.class, true);
+		DateTime dateTime = new DateTime();
+
+		DateStrftime foo1 = new DateStrftime();
+		foo1.date = dateTime.toDate();
+		assertEquals(1, dao.create(foo1));
+
+		DateStrftime foo2 = new DateStrftime();
+		foo2.date = dateTime.plusMonths(1).toDate();
+		assertEquals(1, dao.create(foo2));
+
+		DateTimeFormatter formatter = DateTimeFormat.forPattern("MM-YYYY");
+		String format = formatter.print(dateTime);
+
+		QueryBuilder<DateStrftime, Object> qb = dao.queryBuilder();
+		qb.where().raw("strftime('%m-%Y', date) = '" + format + "'");
+		List<DateStrftime> results = qb.query();
+		assertEquals(1, results.size());
+		assertEquals(foo1.id, results.get(0).id);
+	}
+
 	/* ==================================================================== */
 
 	protected static class IntAutoIncrement {
@@ -149,4 +178,14 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 			this.foo = foo;
 		}
 	}
+
+	protected static class DateStrftime {
+		@DatabaseField(generatedId = true)
+		int id;
+		@DatabaseField (dataType = DataType.DATE_STRING)
+		Date date;
+		public DateStrftime() {
+		}
+	}
+
 }
