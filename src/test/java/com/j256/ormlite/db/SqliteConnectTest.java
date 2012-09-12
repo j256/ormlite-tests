@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
@@ -132,6 +133,17 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		assertEquals(foo1.id, results.get(0).id);
 	}
 
+	@Test(expected = SQLException.class)
+	public void testIdConstraint() throws Exception {
+		Dao<IdConstraint, Integer> dao = createDao(IdConstraint.class, true);
+		IdConstraint foo = new IdConstraint();
+		foo.id = 10;
+		assertEquals(1, dao.create(foo));
+
+		// try to insert it again
+		dao.create(foo);
+	}
+
 	/* ==================================================================== */
 
 	protected static class IntAutoIncrement {
@@ -182,10 +194,18 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 	protected static class DateStrftime {
 		@DatabaseField(generatedId = true)
 		int id;
-		@DatabaseField (dataType = DataType.DATE_STRING)
+		@DatabaseField(dataType = DataType.DATE_STRING)
 		Date date;
 		public DateStrftime() {
 		}
 	}
 
+	protected static class IdConstraint {
+		@DatabaseField(id = true)
+		int id;
+		@DatabaseField
+		String stuff;
+		public IdConstraint() {
+		}
+	}
 }
