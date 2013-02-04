@@ -63,6 +63,12 @@ public class PostgresBaseDaoImplTest extends JdbcBaseDaoImplTest {
 		iterator.close();
 	}
 
+	@Test
+	@Override
+	public void testCloseIteratorBeforeRemove() {
+		// ignored here
+	}
+
 	protected static class PostgresCharNull {
 		@DatabaseField(generatedId = true)
 		int id;
