@@ -1,5 +1,3 @@
--------------------------------------------------------------------------------------------------------
-
 BACKGROUND:
 
 This package provides various tests for the Ormlite project.  These tests are not appropriate for
@@ -11,7 +9,9 @@ For more information, see the online documentation on the home page:
 
    http://ormlite.com/
 
+Sources can be found online via Github:
+
+   https://github.com/j256/ormlite-test
+
 Enjoy,
 Gray Watson
-
--------------------------------------------------------------------------------------------------------
