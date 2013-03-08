@@ -3,7 +3,7 @@
 	<!-- ormlite tests configuration file for Maven (http://maven.apache.org/) -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256</groupId>
-	<artifactId>ormliteTest</artifactId>
+	<artifactId>ormlite-test</artifactId>
 	<version>0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>ORM List Extra Tests</name>
@@ -17,7 +17,7 @@
 		</license>
 	</licenses>
 	<build>
-		<finalName>ormliteTest</finalName>
+		<finalName>ormlite-test</finalName>
 		<!-- Resources -->
 		<resources>
 			<resource>
