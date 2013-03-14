@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<!-- ormlite tests configuration file for Maven (http://maven.apache.org/) -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.j256</groupId>
@@ -86,10 +87,8 @@
 		</plugins>
 	</build>
 	<properties>
-		<!--
-			default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here
-			and have any other characters where this is used, it'll get replaced with string "null"
-		-->
+		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
+			and have any other characters where this is used, it'll get replaced with string "null" -->
 		<surefire.argLine></surefire.argLine>
 
 		<!-- external package versions -->
