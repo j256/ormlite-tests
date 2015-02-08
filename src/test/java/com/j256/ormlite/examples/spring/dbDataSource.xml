@@ -3,8 +3,9 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd">
 
-	<!-- This is a Spring xml file demonstrating the various beans needed to configure the database stuff. See dbDataSource.xml 
-		for an example of using with an external DataSource. -->
+	<!-- This is a Spring xml file demonstrating the various beans needed to configure the database stuff -->
+	
+	<!-- We aren't using this because we didn't want to have a direct dependency on Apache DBCP -->
 
 	<!-- URL used for the database, most likely this would be in a properties file -->
 	<bean id="databaseUrl" class="java.lang.String">
@@ -12,10 +13,21 @@
 		<constructor-arg index="0" value="jdbc:h2:mem:springexample" />
 	</bean>
 
-	<!-- datasource used by the package to connect to the database -->
-	<bean id="connectionSource" class="com.j256.ormlite.jdbc.JdbcConnectionSource" init-method="initialize">
+	<bean id="databaseDriverClassName" class="java.lang.String">
+		<!-- we are using the in-memory H2 database in this example -->
+		<constructor-arg index="0" value="org.h2.Driver" />
+	</bean>
+
+	<!-- connection-source that delegates to a data-source -->
+	<bean id="connectionSource" class="com.j256.ormlite.jdbc.DataSourceConnectionSource" init-method="initialize">
 		<property name="url" ref="databaseUrl" />
-		<!-- probably should use system properties for these too -->
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<!-- our data-source that controlls connections to the datbase -->
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+		<property name="driverClassName" ref="databaseDriverClassName" />
+		<property name="url" ref="databaseUrl" />
 		<property name="username" value="foo" />
 		<property name="password" value="bar" />
 	</bean>
