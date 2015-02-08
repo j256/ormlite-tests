@@ -10,9 +10,31 @@
 	<name>ORM List Extra Tests</name>
 	<url>http://maven.apache.org</url>
 	<description>Lightweight Object Relational Model (ORM) tests</description>
+	<properties>
+		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
+			and have any other characters where this is used, it'll get replaced with string "null" -->
+		<surefire.argLine></surefire.argLine>
+
+		<!-- external package versions -->
+		<easymock-version>2.3</easymock-version>
+		<h2-version>1.2.128</h2-version>
+		<junit-version>4.8.1</junit-version>
+		<mysql-connector-java-version>5.1.18</mysql-connector-java-version>
+		<postgresql-version>8.1-408.jdbc3</postgresql-version>
+		<derby-version>10.8.1.2</derby-version>
+		<sqlite-version>3.6.20</sqlite-version>
+		<hsqldb-version>1.8.0.10</hsqldb-version>
+		<jtds-version>1.2.4</jtds-version>
+		<joda-time-version>1.5</joda-time-version>
+		<!-- needed for spring example -->
+		<spring-version>3.1.4.RELEASE</spring-version>
+		<commons-logging-version>1.1</commons-logging-version>
+		<ormlite-version>4.49-SNAPSHOT</ormlite-version>
+		<cglib-version>3.1</cglib-version>
+	</properties>
 	<licenses>
 		<license>
-			<name>BSD License</name>
+			<name>ISC License</name>
 			<url>http://ormlite.com/docs/license</url>
 			<distribution>repo</distribution>
 		</license>
@@ -86,27 +108,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<properties>
-		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
-			and have any other characters where this is used, it'll get replaced with string "null" -->
-		<surefire.argLine></surefire.argLine>
-
-		<!-- external package versions -->
-		<easymock-version>2.3</easymock-version>
-		<h2-version>1.2.128</h2-version>
-		<junit-version>4.8.1</junit-version>
-		<spring-version>2.0.6</spring-version>
-		<mysql-connector-java-version>5.1.18</mysql-connector-java-version>
-		<postgresql-version>8.1-408.jdbc3</postgresql-version>
-		<derby-version>10.8.1.2</derby-version>
-		<sqlite-version>3.6.20</sqlite-version>
-		<hsqldb-version>1.8.0.10</hsqldb-version>
-		<jtds-version>1.2.4</jtds-version>
-		<joda-time-version>1.5</joda-time-version>
-		<!-- needed for spring example -->
-		<commons-logging-version>1.1</commons-logging-version>
-		<ormlite-version>4.49-SNAPSHOT</ormlite-version>
-	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.j256.ormlite</groupId>
@@ -120,22 +121,33 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
-			<artifactId>spring</artifactId>
+			<artifactId>spring-core</artifactId>
 			<version>${spring-version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>commons-logging</groupId>
-					<artifactId>commons-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>javax.servlet</groupId>
-					<artifactId>servlet-api</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>cglib</groupId>
-					<artifactId>cglib-nodep</artifactId>
-				</exclusion>
-			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context-support</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>cglib</groupId>
+			<artifactId>cglib-nodep</artifactId>
+			<version>${cglib-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.j256.ormlite</groupId>
