@@ -29,7 +29,7 @@
 		<!-- needed for spring example -->
 		<spring-version>3.1.4.RELEASE</spring-version>
 		<commons-logging-version>1.1</commons-logging-version>
-		<ormlite-version>4.49-SNAPSHOT</ormlite-version>
+		<ormlite-version>5.0-SNAPSHOT</ormlite-version>
 		<cglib-version>3.1</cglib-version>
 	</properties>
 	<licenses>
@@ -60,8 +60,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.6</source>
+					<target>1.6</target>
 				</configuration>
 			</plugin>
 			<plugin>
