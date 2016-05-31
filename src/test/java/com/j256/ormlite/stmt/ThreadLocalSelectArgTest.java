@@ -52,6 +52,7 @@ public class ThreadLocalSelectArgTest {
 		for (int i = 0; i < numThreads; i++) {
 			final int num = i;
 			futures[i] = pool.submit(new Runnable() {
+				@Override
 				public void run() {
 					arg.setValue(num);
 					// try N queries each looking for this thread's val field

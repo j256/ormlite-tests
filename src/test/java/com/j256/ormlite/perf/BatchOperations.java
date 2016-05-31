@@ -24,6 +24,7 @@ public class BatchOperations extends BaseJdbcTest {
 		final Dao<GenIdFoo, Integer> fooDao = createDao(GenIdFoo.class, true);
 		final List<Integer> fooIdList = new ArrayList<Integer>();
 		fooDao.callBatchTasks(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				for (int i = 0; i < 10000; i++) {
 					GenIdFoo foo = new GenIdFoo();

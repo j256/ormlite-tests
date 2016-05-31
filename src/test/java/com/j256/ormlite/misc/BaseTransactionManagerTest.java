@@ -73,6 +73,7 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		final TransactionManager mgr = new TransactionManager(connectionSource);
 		final Dao<Foo, Integer> fooDao = createDao(Foo.class, true);
 		mgr.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				testTransactionManager(mgr, null, fooDao, true);
 				return null;
@@ -94,6 +95,7 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		assertNotNull(fooDao.queryForId(outerFoo.id));
 		assertEquals(1, fooDao.queryForAll().size());
 		mgr.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				assertEquals(1, fooDao.delete(outerFoo));
 				assertNull(fooDao.queryForId(outerFoo.id));
@@ -124,6 +126,7 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		assertNotNull(fooDao.queryForId(outerFoo.id));
 		assertEquals(1, fooDao.queryForAll().size());
 		mgr.callInTransaction(new Callable<Void>() {
+			@Override
 			public Void call() throws Exception {
 				assertEquals(1, fooDao.delete(outerFoo));
 				assertNull(fooDao.queryForId(outerFoo.id));
@@ -150,6 +153,7 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		try {
 			dao.setAutoCommit(conn, false);
 			TransactionManager.callInTransaction(connectionSource, new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					assertEquals(1, dao.create(foo));
 					return null;
@@ -176,6 +180,7 @@ public abstract class BaseTransactionManagerTest extends BaseJdbcTest {
 		try {
 			final int val = 13431231;
 			int returned = mgr.callInTransaction(new Callable<Integer>() {
+				@Override
 				public Integer call() throws Exception {
 					// we delete it inside a transaction
 					assertEquals(1, fooDao.delete(foo1));

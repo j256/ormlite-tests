@@ -28,6 +28,7 @@ public class SomeClass implements InitializingBean {
 	 * After this class is configured by Spring, this method is called by Spring after configuration. It is just here as
 	 * an example.
 	 */
+	@Override
 	public void afterPropertiesSet() throws Exception {
 
 		// create an instance of Account
@@ -52,6 +53,7 @@ public class SomeClass implements InitializingBean {
 		try {
 			// try something in a transaction
 			transactionManager.callInTransaction(new Callable<Void>() {
+				@Override
 				public Void call() throws Exception {
 					// we do the delete
 					assertEquals(1, accountDao.delete(account));
