@@ -257,12 +257,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalString foo = new LocalString();
 		foo.string = "not a date format";
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
 					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);
@@ -701,12 +701,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalSerializable foo = new LocalSerializable();
 		foo.serializable = null;
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
 					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			FieldType fieldType =
@@ -734,12 +734,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalByteArray foo = new LocalByteArray();
 		foo.byteField = new byte[] { 1, 2, 3, 4, 5 };
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
 					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			FieldType fieldType =
@@ -785,12 +785,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalEnumString foo = new LocalEnumString();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
 					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			assertEquals(val.toString(),
@@ -835,12 +835,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalEnumInt foo = new LocalEnumInt();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
 					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			assertEquals(
@@ -962,12 +962,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 			boolean isEscapedValue, boolean isPrimitive, boolean isSelectArgRequired, boolean isStreamType,
 			boolean isComparable, boolean isConvertableId) throws Exception {
 		DataPersister dataPersister = dataType.getDataPersister();
-		DatabaseConnection conn = connectionSource.getReadOnlyConnection();
+		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
 			stmt =
 					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS);
+							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(columnName);

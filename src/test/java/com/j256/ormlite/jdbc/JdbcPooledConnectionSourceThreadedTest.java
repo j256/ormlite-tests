@@ -86,14 +86,14 @@ public class JdbcPooledConnectionSourceThreadedTest {
 					break;
 				}
 				switch (random.nextInt(10)) {
-					case 0 :
+					case 0:
 						// save connection
 						if (savedConn == null) {
-							savedConn = pooled.getReadWriteConnection();
+							savedConn = pooled.getReadWriteConnection(null);
 							pooled.saveSpecialConnection(savedConn);
 						}
 						break;
-					case 1 :
+					case 1:
 						// clear saved connection
 						if (savedConn != null) {
 							// the inner transactions should be released as well
@@ -103,10 +103,10 @@ public class JdbcPooledConnectionSourceThreadedTest {
 							closeSavedConn();
 						}
 						break;
-					default :
+					default:
 						if (conn == null) {
 							// get new connection
-							conn = pooled.getReadWriteConnection();
+							conn = pooled.getReadWriteConnection(null);
 						} else {
 							// release our existing one
 							pooled.releaseConnection(conn);

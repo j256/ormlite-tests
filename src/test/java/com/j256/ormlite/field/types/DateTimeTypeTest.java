@@ -49,7 +49,7 @@ public class DateTimeTypeTest extends BaseTypeTest {
 		Dao<LocalDateTime, Object> dao = createDao(clazz, true);
 		LocalDateTime foo = new LocalDateTime();
 		assertEquals(1, dao.create(foo));
-		testType(dao, foo, clazz, null, null, null, null, DataType.DATE_LONG, DATE_TIME_COLUMN, false, true, false,
+		testType(dao, foo, clazz, null, null, null, null, DataType.DATE_TIME, DATE_TIME_COLUMN, false, false, false,
 				false, false, false, true, false);
 	}
 
@@ -88,9 +88,8 @@ public class DateTimeTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testDateTimeParseInvalid() throws Exception {
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateTime.class.getDeclaredField(DATE_TIME_COLUMN), LocalDateTime.class);
+		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+				LocalDateTime.class.getDeclaredField(DATE_TIME_COLUMN), LocalDateTime.class);
 		DataType.DATE_TIME.getDataPersister().parseDefaultString(fieldType, "not valid long number");
 	}
 
