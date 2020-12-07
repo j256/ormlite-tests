@@ -7,9 +7,9 @@ import java.sql.SQLException;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.BaseJdbcTest;
 
 public class BaseTableUtilsTest extends BaseJdbcTest {
 
@@ -126,7 +126,7 @@ public class BaseTableUtilsTest extends BaseJdbcTest {
 		} catch (Exception e) {
 			// ignored
 		}
-		DatabaseTableConfig<Foo> tableConfig = DatabaseTableConfig.fromClass(connectionSource, Foo.class);
+		DatabaseTableConfig<Foo> tableConfig = DatabaseTableConfig.fromClass(databaseType, Foo.class);
 		TableUtils.createTableIfNotExists(connectionSource, tableConfig);
 		assertEquals(0, fooDao.countOf());
 		// should not throw

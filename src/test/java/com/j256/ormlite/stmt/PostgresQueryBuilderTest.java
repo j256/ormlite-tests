@@ -7,12 +7,13 @@ import java.util.List;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.jdbc.stmt.JdbcQueryBuilderTest;
 
 public class PostgresQueryBuilderTest extends JdbcQueryBuilderTest {
 
 	@Override
 	protected void setDatabaseParams() {
-		databaseHost = "db.be.256.com";
+		databaseHost = "db.be.256stuff.com";
 		databaseUrl = "jdbc:postgresql://" + databaseHost + "/ormlitetest";
 		userName = "ormlitetest";
 		password = "hibernate";

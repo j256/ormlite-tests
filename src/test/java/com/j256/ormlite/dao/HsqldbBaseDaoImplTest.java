@@ -5,6 +5,7 @@ import static org.junit.Assert.assertFalse;
 import org.junit.Test;
 
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.dao.JdbcBaseDaoImplTest;
 import com.j256.ormlite.table.DatabaseTable;
 
 public class HsqldbBaseDaoImplTest extends JdbcBaseDaoImplTest {

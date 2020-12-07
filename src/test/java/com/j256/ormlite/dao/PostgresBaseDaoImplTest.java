@@ -6,12 +6,13 @@ import org.junit.Test;
 
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.types.CharType;
+import com.j256.ormlite.jdbc.dao.JdbcBaseDaoImplTest;
 
 public class PostgresBaseDaoImplTest extends JdbcBaseDaoImplTest {
 
 	@Override
 	protected void setDatabaseParams() {
-		databaseHost = "db.be.256.com";
+		databaseHost = "db.be.256stuff.com";
 		databaseUrl = "jdbc:postgresql://" + databaseHost + "/ormlitetest";
 		userName = "ormlitetest";
 		password = "hibernate";

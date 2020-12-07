@@ -88,7 +88,7 @@ public class DateTimeTypeTest extends BaseTypeTest {
 
 	@Test(expected = SQLException.class)
 	public void testDateTimeParseInvalid() throws Exception {
-		FieldType fieldType = FieldType.createFieldType(connectionSource, TABLE_NAME,
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
 				LocalDateTime.class.getDeclaredField(DATE_TIME_COLUMN), LocalDateTime.class);
 		DataType.DATE_TIME.getDataPersister().parseDefaultString(fieldType, "not valid long number");
 	}

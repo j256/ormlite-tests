@@ -3,17 +3,21 @@ package com.j256.ormlite.stmt;
 import static org.junit.Assert.assertEquals;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.jdbc.stmt.JdbcQueryBuilderTest;
 
 public class DerbyEmbeddedQueryBuilderTest extends JdbcQueryBuilderTest {
+
+	private final AtomicInteger derbyCount = new AtomicInteger();
 
 	@Override
 	protected void setDatabaseParams() {
 		System.setProperty("derby.stream.error.file", "target/derby.log");
-		databaseUrl = "jdbc:derby:target/ormlitederby;create=true";
+		databaseUrl = "jdbc:derby:target/ormlitederby" + derbyCount.incrementAndGet() + ";create=true";
 	}
 
 	@Override

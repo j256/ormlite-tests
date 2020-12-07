@@ -6,6 +6,8 @@ import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.db.MysqlDatabaseType;
+import com.j256.ormlite.jdbc.db.MysqlDatabaseTypeTest;
 import com.j256.ormlite.table.DatabaseTable;
 
 /**
@@ -18,7 +20,7 @@ public class MysqlConnectTest extends MysqlDatabaseTypeTest {
 
 	@Override
 	protected void setDatabaseParams() {
-		databaseHost = "db.be.256.com";
+		databaseHost = "db.be.256stuff.com";
 		databaseUrl = "jdbc:mysql://" + databaseHost + "/ormlitetest";
 		userName = "ormlitetest";
 		password = "hibernate";

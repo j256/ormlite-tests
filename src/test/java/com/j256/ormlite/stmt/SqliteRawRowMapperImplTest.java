@@ -6,11 +6,11 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 
-import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.CloseableIterator;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.GenericRawResults;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.BaseJdbcTest;
 
 public class SqliteRawRowMapperImplTest extends BaseJdbcTest {
 

@@ -2,7 +2,7 @@ package com.j256.ormlite.examples.spring;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import com.j256.ormlite.spring.TableCreator;
+import com.j256.ormlite.jdbc.spring.TableCreator;
 
 /**
  * Main sample routine to show how to do basic operations with the package and Spring.

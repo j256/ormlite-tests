@@ -17,6 +17,7 @@ import org.junit.Test;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
+import com.j256.ormlite.jdbc.db.SqliteDatabaseTypeTest;
 import com.j256.ormlite.stmt.QueryBuilder;
 import com.j256.ormlite.stmt.UpdateBuilder;
 
@@ -59,18 +60,6 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		assertEquals(1L, foo.id);
 		LongAutoIncrement result = dao.queryForId(foo.id);
 		assertNotSame(foo, result);
-		assertEquals(foo.stuff, result.stuff);
-	}
-
-	@Test
-	public void testWierdColumnNames() throws Exception {
-		Dao<WeirdColumnNames, Object> dao = createDao(WeirdColumnNames.class, true);
-		WeirdColumnNames foo = new WeirdColumnNames();
-		foo.stuff = "peowjfpwjfowefwe";
-		assertEquals(1, dao.create(foo));
-
-		WeirdColumnNames result = dao.queryForId(foo.id);
-		assertNotNull(result);
 		assertEquals(foo.stuff, result.stuff);
 	}
 
@@ -151,6 +140,7 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		int id;
 		@DatabaseField
 		String stuff;
+
 		public IntAutoIncrement() {
 		}
 	}
@@ -160,16 +150,8 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		long id;
 		@DatabaseField
 		String stuff;
-		public LongAutoIncrement() {
-		}
-	}
 
-	protected static class WeirdColumnNames {
-		@DatabaseField(generatedId = true)
-		int id;
-		@DatabaseField(columnName = "foo.bar")
-		String stuff;
-		public WeirdColumnNames() {
+		public LongAutoIncrement() {
 		}
 	}
 
@@ -179,6 +161,7 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		public int id;
 		@DatabaseField(dataType = DataType.SERIALIZABLE, columnName = SERIALIZED_FIELD_NAME)
 		public SerializedField serialized;
+
 		public SerializedUpdate() {
 		}
 	}
@@ -186,6 +169,7 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 	protected static class SerializedField implements Serializable {
 		private static final long serialVersionUID = 4531762180289888888L;
 		String foo;
+
 		public SerializedField(String foo) {
 			this.foo = foo;
 		}
@@ -196,6 +180,7 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		int id;
 		@DatabaseField(dataType = DataType.DATE_STRING)
 		Date date;
+
 		public DateStrftime() {
 		}
 	}
@@ -205,6 +190,7 @@ public class SqliteConnectTest extends SqliteDatabaseTypeTest {
 		int id;
 		@DatabaseField
 		String stuff;
+
 		public IdConstraint() {
 		}
 	}

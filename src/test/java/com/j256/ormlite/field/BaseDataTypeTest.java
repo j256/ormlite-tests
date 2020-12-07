@@ -1,5 +1,6 @@
 package com.j256.ormlite.field;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -28,8 +29,8 @@ import org.joda.time.DateTime;
 import org.junit.AfterClass;
 import org.junit.Test;
 
-import com.j256.ormlite.BaseJdbcTest;
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.jdbc.BaseJdbcTest;
 import com.j256.ormlite.stmt.StatementBuilder.StatementType;
 import com.j256.ormlite.support.CompiledStatement;
 import com.j256.ormlite.support.DatabaseConnection;
@@ -60,7 +61,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String BIG_DECIMAL_NUMBERIC_COLUMN = "bigDecimalNumeric";
 	private static final String DATE_TIME_COLUMN = "dateTime";
 	private static final String SQL_DATE_COLUMN = "sqlDate";
-	private static final String TIME_STAMP_COLUMN = "timestamp";
+	private static final String TIME_STAMP_COLUMN = "timeStamp";
+	private static final String TIME_STAMP_STRING_COLUMN = "timeStampString";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	protected boolean byteArrayComparisonsWork() {
@@ -111,8 +113,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
 		byte[] valBytes = val.getBytes("Unicode");
-		testType(clazz, val, val, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
-				false, true, false);
+		testType(clazz, val, valBytes, valBytes, val, DataType.STRING_BYTES, STRING_COLUMN, false, true, true, false,
+				true, false, true, false);
 		if (byteArrayComparisonsWork()) {
 			List<LocalStringBytes> stringBytes = dao.query(dao.queryBuilder().where().eq(STRING_COLUMN, val).prepare());
 			assertEquals(1, stringBytes.size());
@@ -128,8 +130,9 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalStringBytesUtf8 foo = new LocalStringBytesUtf8();
 		foo.string = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val.getBytes("UTF-8"), val, DataType.STRING_BYTES, STRING_COLUMN, false, false, true,
-				false, true, false, true, false);
+		byte[] sqlArg = val.getBytes("UTF-8");
+		testType(clazz, val, sqlArg, sqlArg, val, DataType.STRING_BYTES, STRING_COLUMN, false, true, true, false, true,
+				false, true, false);
 	}
 
 	@Test
@@ -137,7 +140,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalStringBytes> clazz = LocalStringBytes.class;
 		Dao<LocalStringBytes, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalStringBytes()));
-		testType(clazz, null, null, null, null, DataType.STRING_BYTES, STRING_COLUMN, false, false, true, false, true,
+		testType(clazz, null, null, null, null, DataType.STRING_BYTES, STRING_COLUMN, false, true, true, false, true,
 				false, true, false);
 	}
 
@@ -172,8 +175,36 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalBooleanObj> clazz = LocalBooleanObj.class;
 		Dao<LocalBooleanObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalBooleanObj()));
-		testType(clazz, null, null, null, null, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false,
+		testType(clazz, null, null, null, null, DataType.BOOLEAN_OBJ, BOOLEAN_COLUMN, false, false, false, false, false,
+				false, true, false);
+	}
+
+	@Test
+	public void testBooleanChar() throws Exception {
+		Class<LocalBooleanChar> clazz = LocalBooleanChar.class;
+		Dao<LocalBooleanChar, Object> dao = createDao(clazz, true);
+		boolean val = true;
+		String valStr = Boolean.toString(val);
+		char sqlVal = (val ? '1' : '0');
+		LocalBooleanChar foo = new LocalBooleanChar();
+		foo.bool = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.BOOLEAN_CHAR, BOOLEAN_COLUMN, false, false, false, true,
 				false, false, true, false);
+	}
+
+	@Test
+	public void testBooleanInteger() throws Exception {
+		Class<LocalBooleanInteger> clazz = LocalBooleanInteger.class;
+		Dao<LocalBooleanInteger, Object> dao = createDao(clazz, true);
+		boolean val = true;
+		String valStr = Boolean.toString(val);
+		int sqlVal = (val ? 1 : 0);
+		LocalBooleanInteger foo = new LocalBooleanInteger();
+		foo.bool = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.BOOLEAN_INTEGER, BOOLEAN_COLUMN, false, false, false,
+				true, false, false, true, false);
 	}
 
 	@Test
@@ -210,8 +241,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalDate> clazz = LocalDate.class;
 		Dao<LocalDate, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalDate()));
-		testType(clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false,
-				true, false);
+		testType(clazz, null, null, null, null, DataType.DATE, DATE_COLUMN, false, true, true, false, true, false, true,
+				false);
 	}
 
 	@Test(expected = SQLException.class)
@@ -219,9 +250,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		if (connectionSource == null) {
 			throw new SQLException("simulate expected exception");
 		}
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME, LocalDate.class.getDeclaredField(DATE_COLUMN),
-						LocalDate.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
+				LocalDate.class.getDeclaredField(DATE_COLUMN), LocalDate.class);
 		DataType.DATE.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -237,8 +267,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalDateString foo = new LocalDateString();
 		foo.date = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, valStr, sqlVal, sqlVal, DataType.DATE_STRING, DATE_COLUMN, false, true, true, false,
-				false, false, true, false);
+		testType(clazz, val, valStr, sqlVal, sqlVal, DataType.DATE_STRING, DATE_COLUMN, false, true, true, false, false,
+				false, true, false);
 	}
 
 	@Test
@@ -260,9 +290,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(STRING_COLUMN);
@@ -280,9 +309,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		if (connectionSource == null) {
 			throw new SQLException("simulate expected exception");
 		}
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
+				LocalDateString.class.getDeclaredField(DATE_COLUMN), LocalDateString.class);
 		DataType.DATE_STRING.getDataPersister().parseDefaultString(fieldType, "not valid date string");
 	}
 
@@ -314,10 +342,25 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		if (connectionSource == null) {
 			throw new SQLException("simulate expected exception");
 		}
-		FieldType fieldType =
-				FieldType.createFieldType(connectionSource, TABLE_NAME,
-						LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
+		FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
+				LocalDateLong.class.getDeclaredField(DATE_COLUMN), LocalDateLong.class);
 		DataType.DATE_LONG.getDataPersister().parseDefaultString(fieldType, "not valid long number");
+	}
+
+	@Test
+	public void testDateInteger() throws Exception {
+		Class<LocalDateInteger> clazz = LocalDateInteger.class;
+		Dao<LocalDateInteger, Object> dao = createDao(clazz, true);
+		long millis = System.currentTimeMillis();
+		millis -= millis % 1000;
+		Date val = new Date(millis);
+		int sqlVal = (int) (val.getTime() / 1000);
+		String valStr = Integer.toString(sqlVal);
+		LocalDateInteger foo = new LocalDateInteger();
+		foo.date = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.DATE_INTEGER, DATE_COLUMN, false, true, false, false,
+				false, false, true, false);
 	}
 
 	@Test
@@ -355,8 +398,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalByte foo = new LocalByte();
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.BYTE, BYTE_COLUMN, false, true, false, true, false, false,
-				true, false);
+		testType(clazz, val, val, val, valStr, DataType.BYTE, BYTE_COLUMN, false, true, false, true, false, false, true,
+				true);
 	}
 
 	@Test
@@ -369,7 +412,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false, false,
-				true, false);
+				true, true);
 	}
 
 	@Test
@@ -377,8 +420,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalByteObj> clazz = LocalByteObj.class;
 		Dao<LocalByteObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalByteObj()));
-		testType(clazz, null, null, null, null, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false,
-				false, true, false);
+		testType(clazz, null, null, null, null, DataType.BYTE_OBJ, BYTE_COLUMN, false, true, false, false, false, false,
+				true, true);
 	}
 
 	@Test
@@ -398,12 +441,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalByteArray> clazz = LocalByteArray.class;
 		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
 		byte[] val = new byte[] { 123, 4, 124, 1, 0, 72 };
-		String valStr = Arrays.toString(val);
+		String valStr = new String(val);
 		LocalByteArray foo = new LocalByteArray();
 		foo.byteField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false, true,
-				false, true, false);
+		testType(clazz, val, val, val, valStr, DataType.BYTE_ARRAY, BYTE_COLUMN, false, true, true, false, true, false,
+				true, false);
 	}
 
 	@Test
@@ -411,13 +454,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalByteArray> clazz = LocalByteArray.class;
 		Dao<LocalByteArray, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalByteArray()));
-		testType(clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, false, true, false, true,
-				false, true, false);
-	}
-
-	@Test(expected = SQLException.class)
-	public void testByteArrayParseDefault() throws Exception {
-		DataType.BYTE_ARRAY.getDataPersister().parseDefaultString(null, null);
+		testType(clazz, null, null, null, null, DataType.BYTE_ARRAY, BYTE_COLUMN, false, true, true, false, true, false,
+				true, false);
 	}
 
 	@Test
@@ -430,7 +468,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.shortField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.SHORT, SHORT_COLUMN, false, true, false, true, false, false,
-				true, false);
+				true, true);
 	}
 
 	@Test
@@ -443,7 +481,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.shortField = val;
 		assertEquals(1, dao.create(foo));
 		testType(clazz, val, val, val, valStr, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
-				false, true, false);
+				false, true, true);
 	}
 
 	@Test
@@ -452,7 +490,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Dao<LocalShortObj, Object> dao = createDao(clazz, true);
 		assertEquals(1, dao.create(new LocalShortObj()));
 		testType(clazz, null, null, null, null, DataType.SHORT_OBJ, SHORT_COLUMN, false, true, false, false, false,
-				false, true, false);
+				false, true, true);
 	}
 
 	@Test
@@ -489,8 +527,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalIntObj foo = new LocalIntObj();
 		foo.intField = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, valStr, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false,
-				false, true, true);
+		testType(clazz, val, val, val, valStr, DataType.INTEGER_OBJ, INT_COLUMN, true, true, false, false, false, false,
+				true, true);
 	}
 
 	@Test
@@ -681,8 +719,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		LocalSerializable foo = new LocalSerializable();
 		foo.serializable = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true,
-				false, true, true, false, false);
+		testType(clazz, val, val, sqlArg, valStr, DataType.SERIALIZABLE, SERIALIZABLE_COLUMN, false, false, true, false,
+				true, true, false, false);
 	}
 
 	@Test
@@ -704,16 +742,14 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, TABLE_NAME,
-							clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
-			assertNull(DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results,
-					results.findColumn(SERIALIZABLE_COLUMN)));
+			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
+					clazz.getDeclaredField(SERIALIZABLE_COLUMN), clazz);
+			assertNull(DataType.SERIALIZABLE.getDataPersister()
+					.resultToJava(fieldType, results, results.findColumn(SERIALIZABLE_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -737,14 +773,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, TABLE_NAME,
-							LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
+			FieldType fieldType = FieldType.createFieldType(databaseType, TABLE_NAME,
+					LocalSerializable.class.getDeclaredField(SERIALIZABLE_COLUMN), LocalSerializable.class);
 			DataType.SERIALIZABLE.getDataPersister().resultToJava(fieldType, results, results.findColumn(BYTE_COLUMN));
 		} finally {
 			if (stmt != null) {
@@ -759,13 +793,13 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		Class<LocalEnumString> clazz = LocalEnumString.class;
 		Dao<LocalEnumString, Object> dao = createDao(clazz, true);
 		OurEnum val = OurEnum.SECOND;
-		String valStr = val.toString();
+		String valStr = val.name();
 		String sqlVal = valStr;
 		LocalEnumString foo = new LocalEnumString();
 		foo.ourEnum = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false,
-				false, false, true, false);
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_STRING, ENUM_COLUMN, false, true, true, false, false,
+				false, true, false);
 	}
 
 	@Test
@@ -788,14 +822,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			assertEquals(val.toString(),
-					DataType.ENUM_STRING.getDataPersister()
-							.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
+			assertEquals(val.name(), DataType.ENUM_STRING.getDataPersister()
+					.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
@@ -838,21 +870,46 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
-			assertEquals(
-					val.ordinal(),
-					DataType.ENUM_INTEGER.getDataPersister().resultToJava(null, results,
-							results.findColumn(ENUM_COLUMN)));
+			assertEquals(val.ordinal(), DataType.ENUM_INTEGER.getDataPersister()
+					.resultToJava(null, results, results.findColumn(ENUM_COLUMN)));
 		} finally {
 			if (stmt != null) {
 				stmt.close();
 			}
 			connectionSource.releaseConnection(conn);
 		}
+	}
+
+	@Test
+	public void testEnumToString() throws Exception {
+		Class<LocalEnumToString> clazz = LocalEnumToString.class;
+		Dao<LocalEnumToString, Object> dao = createDao(clazz, true);
+		OurEnum val = OurEnum.SECOND;
+		String valStr = val.toString();
+		String sqlVal = valStr;
+		LocalEnumToString foo = new LocalEnumToString();
+		foo.ourEnum = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_TO_STRING, ENUM_COLUMN, false, true, true, false,
+				false, false, true, false);
+	}
+
+	@Test
+	public void testEnumName() throws Exception {
+		Class<LocalEnumName> clazz = LocalEnumName.class;
+		Dao<LocalEnumName, Object> dao = createDao(clazz, true);
+		OurEnum val = OurEnum.SECOND;
+		String valStr = val.name();
+		String sqlVal = valStr;
+		LocalEnumName foo = new LocalEnumName();
+		foo.ourEnum = val;
+		assertEquals(1, dao.create(foo));
+		testType(clazz, val, sqlVal, sqlVal, valStr, DataType.ENUM_NAME, ENUM_COLUMN, false, true, true, false, false,
+				false, true, false);
 	}
 
 	@Test
@@ -864,8 +921,21 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.uuid = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
-		testType(clazz, val, val, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false, false, false,
+		testType(clazz, val, valStr, valStr, valStr, DataType.UUID, UUID_COLUMN, true, true, true, false, false, false,
 				true, false);
+	}
+
+	@Test
+	public void testUuidNative() throws Exception {
+		Class<LocalUuid> clazz = LocalUuid.class;
+		Dao<LocalUuid, Object> dao = createDao(clazz, true);
+		LocalUuid foo = new LocalUuid();
+		UUID val = UUID.randomUUID();
+		foo.uuid = val;
+		assertEquals(1, dao.create(foo));
+		String valStr = val.toString();
+		testType(clazz, val, valStr, valStr, valStr, DataType.UUID_NATIVE, UUID_COLUMN, true, true, true, false, false,
+				false, true, false);
 	}
 
 	@Test
@@ -877,8 +947,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.bigInteger = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
-		testType(clazz, val, val, valStr, valStr, DataType.BIG_INTEGER, BIG_INTEGER_COLUMN, false, false, true, false,
-				false, false, true, false);
+		testType(clazz, val, valStr, valStr, valStr, DataType.BIG_INTEGER, BIG_INTEGER_COLUMN, true, true, true, false,
+				false, false, true, true);
 	}
 
 	@Test
@@ -890,8 +960,8 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		foo.bigDecimal = val;
 		assertEquals(1, dao.create(foo));
 		String valStr = val.toString();
-		testType(clazz, val, val, valStr, valStr, DataType.BIG_DECIMAL, BIG_DECIMAL_COLUMN, false, false, true, false,
-				false, false, true, false);
+		testType(clazz, val, valStr, valStr, valStr, DataType.BIG_DECIMAL, BIG_DECIMAL_COLUMN, false, false, true,
+				false, false, false, true, false);
 	}
 
 	@Test
@@ -930,10 +1000,27 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		// sql server looks like it has deciseconds resolution
 		long time = new DateTime().withMillis(0).getMillis();
 		java.sql.Timestamp val = new java.sql.Timestamp(time);
-		foo.timestamp = val;
+		foo.timeStamp = val;
 		assertEquals(1, dao.create(foo));
-		testType(clazz, val, val, val, val.toString(), DataType.TIME_STAMP, TIME_STAMP_COLUMN, false, true, true,
-				false, true, false, true, false);
+		testType(clazz, val, val, val, val.toString(), DataType.TIME_STAMP, TIME_STAMP_COLUMN, false, true, true, false,
+				true, false, true, false);
+	}
+
+	@Test
+	public void testTimestampString() throws Exception {
+		Class<LocalTimestampString> clazz = LocalTimestampString.class;
+		Dao<LocalTimestampString, Object> dao = createDao(clazz, true);
+		LocalTimestampString foo = new LocalTimestampString();
+		// sql server looks like it has deciseconds resolution
+		long time = new DateTime().withMillis(0).getMillis();
+		java.sql.Timestamp val = new java.sql.Timestamp(time);
+		foo.timeStampString = val;
+		assertEquals(1, dao.create(foo));
+		String format = "yyyy-MM-dd HH:mm:ss.SSSSSS";
+		DateFormat dateFormat = new SimpleDateFormat(format);
+		String valStr = dateFormat.format(val);
+		testType(clazz, val, valStr, valStr, valStr, DataType.TIME_STAMP_STRING, TIME_STAMP_STRING_COLUMN, false, true,
+				true, false, true, false, true, false);
 	}
 
 	@Test
@@ -965,14 +1052,13 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
 		try {
-			stmt =
-					conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
-							DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
+			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
+					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
 			DatabaseResults results = stmt.runQuery(null);
 			assertTrue(results.next());
 			int colNum = results.findColumn(columnName);
 			FieldType fieldType =
-					FieldType.createFieldType(connectionSource, TABLE_NAME, clazz.getDeclaredField(columnName), clazz);
+					FieldType.createFieldType(databaseType, TABLE_NAME, clazz.getDeclaredField(columnName), clazz);
 			if (javaVal instanceof byte[]) {
 				assertTrue(Arrays.equals((byte[]) javaVal,
 						(byte[]) dataPersister.resultToJava(fieldType, results, colNum)));
@@ -982,8 +1068,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 				Object result = fieldType.resultToJava(results, colMap);
 				assertEquals(javaVal, result);
 			}
-			if (dataType == DataType.STRING_BYTES || dataType == DataType.BYTE_ARRAY
-					|| dataType == DataType.SERIALIZABLE) {
+			if (dataType == DataType.SERIALIZABLE) {
 				try {
 					dataPersister.parseDefaultString(fieldType, "");
 					fail("parseDefaultString should have thrown for " + dataType);
@@ -991,7 +1076,13 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 					// expected
 				}
 			} else if (defaultValStr != null) {
-				assertEquals(sqlVal, dataPersister.parseDefaultString(fieldType, defaultValStr));
+				Class<?> componentType = sqlVal.getClass().getComponentType();
+				if (componentType == byte.class) {
+					assertArrayEquals((byte[]) sqlVal,
+							(byte[]) dataPersister.parseDefaultString(fieldType, defaultValStr));
+				} else {
+					assertEquals(sqlVal, dataPersister.parseDefaultString(fieldType, defaultValStr));
+				}
 			}
 			if (sqlArg == null) {
 				// noop
@@ -1001,14 +1092,14 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 				assertEquals(sqlArg, dataPersister.javaToSqlArg(fieldType, javaVal));
 				assertEquals(javaVal, dataPersister.sqlArgToJava(fieldType, sqlArg, 0));
 			}
-			assertEquals(isValidGeneratedType, dataPersister.isValidGeneratedType());
-			assertEquals(isAppropriateId, dataPersister.isAppropriateId());
+			assertEquals("valid-generated-type", isValidGeneratedType, dataPersister.isValidGeneratedType());
+			assertEquals("appropriate-id", isAppropriateId, dataPersister.isAppropriateId());
 			assertEquals(isEscapedValue, dataPersister.isEscapedValue());
-			assertEquals(isEscapedValue, dataPersister.isEscapedDefaultValue());
-			assertEquals(isPrimitive, dataPersister.isPrimitive());
-			assertEquals(isSelectArgRequired, dataPersister.isArgumentHolderRequired());
-			assertEquals(isStreamType, dataPersister.isStreamType());
-			assertEquals(isComparable, dataPersister.isComparable());
+			assertEquals("escaped-default-value", isEscapedValue, dataPersister.isEscapedDefaultValue());
+			assertEquals("primitive", isPrimitive, dataPersister.isPrimitive());
+			assertEquals("select-arg-required", isSelectArgRequired, dataPersister.isArgumentHolderRequired());
+			assertEquals("stream", isStreamType, dataPersister.isStreamType());
+			assertEquals("comparable", isComparable, dataPersister.isComparable());
 			if (isConvertableId) {
 				assertNotNull(dataPersister.convertIdNumber(10));
 			} else {
@@ -1060,6 +1151,18 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalBooleanChar {
+		@DatabaseField(columnName = BOOLEAN_COLUMN, dataType = DataType.BOOLEAN_CHAR)
+		boolean bool;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalBooleanInteger {
+		@DatabaseField(columnName = BOOLEAN_COLUMN, dataType = DataType.BOOLEAN_INTEGER)
+		boolean bool;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDate {
 		@DatabaseField(columnName = DATE_COLUMN)
 		Date date;
@@ -1074,6 +1177,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalDateLong {
 		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_LONG)
+		Date date;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalDateInteger {
+		@DatabaseField(columnName = DATE_COLUMN, dataType = DataType.DATE_INTEGER)
 		Date date;
 	}
 
@@ -1192,6 +1301,18 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalEnumToString {
+		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_TO_STRING)
+		OurEnum ourEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalEnumName {
+		@DatabaseField(columnName = ENUM_COLUMN, dataType = DataType.ENUM_NAME)
+		OurEnum ourEnum;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalUuid {
 		@DatabaseField(columnName = UUID_COLUMN)
 		UUID uuid;
@@ -1230,7 +1351,13 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	@DatabaseTable(tableName = TABLE_NAME)
 	protected static class LocalTimestamp {
 		@DatabaseField(columnName = TIME_STAMP_COLUMN)
-		java.sql.Timestamp timestamp;
+		java.sql.Timestamp timeStamp;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalTimestampString {
+		@DatabaseField(columnName = TIME_STAMP_STRING_COLUMN)
+		java.sql.Timestamp timeStampString;
 	}
 
 	@DatabaseTable(tableName = TABLE_NAME)
@@ -1241,10 +1368,19 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 
 	private enum OurEnum {
 		FIRST,
-		SECOND, ;
+		SECOND() {
+			@Override
+			public String toString() {
+				return "THIRD";
+			}
+		},
+		// end
+		;
 	}
 
 	private enum OurEnum2 {
-		FIRST, ;
+		FIRST,
+		// end
+		;
 	}
 }

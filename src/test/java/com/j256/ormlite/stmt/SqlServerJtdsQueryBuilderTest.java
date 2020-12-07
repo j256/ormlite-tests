@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import org.junit.Test;
 
 import com.j256.ormlite.dao.Dao;
+import com.j256.ormlite.jdbc.stmt.JdbcQueryBuilderTest;
 
 public class SqlServerJtdsQueryBuilderTest extends JdbcQueryBuilderTest {
 

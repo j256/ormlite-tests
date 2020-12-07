@@ -3,6 +3,8 @@ package com.j256.ormlite.dao;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import com.j256.ormlite.jdbc.dao.JdbcBaseDaoImplTest;
+
 public class SqlServerJtdsBaseDaoImplTest extends JdbcBaseDaoImplTest {
 
 	@Override
