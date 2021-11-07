@@ -17,6 +17,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Currency;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -63,6 +64,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	private static final String SQL_DATE_COLUMN = "sqlDate";
 	private static final String TIME_STAMP_COLUMN = "timeStamp";
 	private static final String TIME_STAMP_STRING_COLUMN = "timeStampString";
+	private static final String CURRENCY_COLUMN = "currency";
 	private static final FieldType[] noFieldTypes = new FieldType[0];
 
 	protected boolean byteArrayComparisonsWork() {
@@ -71,10 +73,14 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 
 	@AfterClass
 	public static void afterClass() throws Exception {
+		Set<DataType> missedType = new HashSet<DataType>();
 		for (DataType dataType : DataType.values()) {
 			if (!dataTypeSet.contains(dataType)) {
-				throw new IllegalStateException("Did not properly test data type " + dataType);
+				missedType.add(dataType);
 			}
+		}
+		if (!missedType.isEmpty()) {
+			throw new IllegalStateException("Did not properly test data type(s) " + missedType);
 		}
 	}
 
@@ -1020,7 +1026,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DateFormat dateFormat = new SimpleDateFormat(format);
 		String valStr = dateFormat.format(val);
 		testType(clazz, val, valStr, valStr, valStr, DataType.TIME_STAMP_STRING, TIME_STAMP_STRING_COLUMN, false, true,
-				true, false, true, false, true, false);
+				true, false, false, false, true, false);
 	}
 
 	@Test
@@ -1038,11 +1044,25 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	}
 
 	@Test
-	public void testDateTime() {
+	public void testUnknown() {
 		DataType dataType = DataType.UNKNOWN;
 		assertNull(dataType.getDataPersister());
 		dataTypeSet.add(dataType);
 	}
+
+	@Test
+	public void testCurrency() throws Exception {
+		Class<LocalCurrency> clazz = LocalCurrency.class;
+		Dao<LocalCurrency, Object> dao = createDao(clazz, true);
+		LocalCurrency foo = new LocalCurrency();
+		foo.currency = Currency.getInstance("USD");
+		assertEquals(1, dao.create(foo));
+		String valStr = foo.currency.toString();
+		testType(clazz, foo.currency, valStr, valStr, valStr, DataType.CURRENCY, CURRENCY_COLUMN, false, false, true,
+				false, false, false, true, false);
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private void testType(Class<?> clazz, Object javaVal, Object sqlVal, Object sqlArg, String defaultValStr,
 			DataType dataType, String columnName, boolean isValidGeneratedType, boolean isAppropriateId,
@@ -1051,6 +1071,7 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 		DataPersister dataPersister = dataType.getDataPersister();
 		DatabaseConnection conn = connectionSource.getReadOnlyConnection(TABLE_NAME);
 		CompiledStatement stmt = null;
+		System.out.println("tested " + dataType);
 		try {
 			stmt = conn.compileStatement("select * from " + TABLE_NAME, StatementType.SELECT, noFieldTypes,
 					DatabaseConnection.DEFAULT_RESULT_FLAGS, true);
@@ -1364,6 +1385,12 @@ public class BaseDataTypeTest extends BaseJdbcTest {
 	protected static class LocalUnknown {
 		@DatabaseField
 		LocalUnknown unkown;
+	}
+
+	@DatabaseTable(tableName = TABLE_NAME)
+	protected static class LocalCurrency {
+		@DatabaseField(columnName = CURRENCY_COLUMN)
+		Currency currency;
 	}
 
 	private enum OurEnum {
