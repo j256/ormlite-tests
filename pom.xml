@@ -13,7 +13,10 @@
 	<properties>
 		<!-- default empty string that can be overridden on command line. due to surefire's parser bug, if we don't have this here 
 			and have any other characters where this is used, it'll get replaced with string "null" -->
-		<surefire.argLine></surefire.argLine>
+		<surefire.argLine>-Dfile.encoding=UTF-8</surefire.argLine>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+		<ormlite-version>6.0-SNAPSHOT</ormlite-version>
 
 		<!-- external package versions -->
 		<easymock-version>3.4</easymock-version>
@@ -29,7 +32,6 @@
 		<!-- needed for spring example -->
 		<spring-version>4.3.20.RELEASE</spring-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
-		<ormlite-version>5.7-SNAPSHOT</ormlite-version>
 		<cglib-version>3.1</cglib-version>
 	</properties>
 	<licenses>
@@ -60,8 +62,9 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0.2</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
+					<encoding>UTF-8</encoding>
 				</configuration>
 			</plugin>
 			<plugin>
