@@ -20,7 +20,7 @@
 
 		<!-- external package versions -->
 		<easymock-version>3.4</easymock-version>
-		<h2-version>1.4.200</h2-version>
+		<h2-version>2.1.210</h2-version>
 		<junit-version>4.13.1</junit-version>
 		<mysql-connector-java-version>5.1.18</mysql-connector-java-version>
 		<postgresql-version>8.1-408.jdbc3</postgresql-version>
