@@ -30,7 +30,7 @@
 		<jtds-version>1.2.4</jtds-version>
 		<joda-time-version>1.5</joda-time-version>
 		<!-- needed for spring example -->
-		<spring-version>4.3.21.RELEASE</spring-version>
+		<spring-version>5.3.19</spring-version>
 		<commons-logging-version>1.1.1</commons-logging-version>
 		<cglib-version>3.1</cglib-version>
 	</properties>
