@@ -24,7 +24,7 @@
 		<junit-version>4.13.1</junit-version>
 		<mysql-connector-java-version>5.1.18</mysql-connector-java-version>
 		<postgresql-version>8.1-408.jdbc3</postgresql-version>
-		<derby-version>10.8.1.2</derby-version>
+		<derby-version>10.14.2.0</derby-version>
 		<sqlite-version>3.6.20</sqlite-version>
 		<hsqldb-version>1.8.0.10</hsqldb-version>
 		<jtds-version>1.2.4</jtds-version>
